@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Skill Tree</title>
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<script src="/jquery/dist/jquery.js"></script>
+	<script src="/bootstrap/dist/js/bootstrap.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h1>Skill Tree</h1>
+		Browse view
+		<ul>
+			<%	for (var i = 0; i < content.classes.length; i++) { %>
+				<li><a href="/class/<%=content.classes[i].id%>"><%= content.classes[i].desc %></a></li>
+			<% } %>
+		</ul>
+
+	</div>
+</body>
+</html>

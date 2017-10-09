@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Skill Tree</title>
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<script src="/jquery/dist/jquery.js"></script>
+	<script src="/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="/js/d3.min.js"></script>
+	<!-- Make some content accessible for clientside JS-->
+	<script type="text/javascript">var content =<%-JSON.stringify(content.client)%></script>
+	<script src="/js/app.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h1>Canvas Page</h1>
+		<h3>Hello user: <%= content.user.username%></h3>
+		<p>Has canvas with avatar and class functionality</p>
+
+		<p>Canvas goes here!</p>
+
+		<a href="/browse">Browse all Classes!</a>
+	</div>
+</body>
+</html>
