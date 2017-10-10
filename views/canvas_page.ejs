@@ -6,10 +6,46 @@
 	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
 	<script src="/jquery/dist/jquery.js"></script>
 	<script src="/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="/js/d3.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<!-- Make some content accessible for clientside JS-->
 	<script type="text/javascript">var content =<%-JSON.stringify(content.client)%></script>
 	<script src="/js/app.js"></script>
+
+	<style>
+
+		body {
+		  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		  width: 960px;
+		  height: 500px;
+		  position: relative;
+		}
+
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+
+		path.slice{
+			stroke-width:2px;
+		}
+		.link {
+		    fill: none;
+		    stroke: steelblue;
+		    stroke-width: 1.5px;
+		}
+		.node {
+		    fill: #fff;
+		    stroke: steelblue;
+		    stroke-width: 1.5px;
+		}
+		polyline{
+			opacity: .3;
+			stroke: black;
+			stroke-width: 2px;
+			fill: none;
+		}
+
+	</style>
 </head>
 <body>
 	<div class="container">
@@ -20,6 +56,14 @@
 		<p>Canvas goes here!</p>
 
 		<a href="/browse">Browse all Classes!</a>
+
+		<hr>
+		<button class="randomize">randomize</button>
+		<button class="append">append</button>
+		<button class="remove">remove</button>
+
+
+
 	</div>
 </body>
 </html>
