@@ -15,7 +15,7 @@ svg.append("g")
 
 var width = 960,
     height = 450,
-	radius = Math.min(width, height) / 2;
+	radius = Math.min(width, height) / 3;
 var animationTime = 300;
 var pie = d3.layout.pie()
 	.sort(null)
@@ -49,14 +49,14 @@ var curdata;
 function randomData (){
 	var labels = color.domain().slice(0,Math.round(Math.random()*11));
 	curdata = labels.map(function(label){
-		return { label: label, value: Math.random()}
+		return { label: label, value: 1}
 	});
 	return curdata;
 }
 
 function append(){
 	var labels = color.domain();
-	curdata.push({ label: labels[curdata.length], value: Math.random() });
+	curdata.push({ label: labels[curdata.length], value: 1 });
 	return curdata;
 }
 
@@ -81,6 +81,7 @@ d3.select(".remove")
 	.on("click", function(){
 		change(remove());
 });
+
 
 
 function change(data) {
@@ -135,119 +136,66 @@ treeEnter.append("text")
 	.text(function(d) {
 		return d.data.label;
 	})
-	.each(function(d){
- 		var data = getData();
- 		var tree = d3.layout.tree()
-			.size([100, 50]);
- 		var nodes = tree.nodes(root).reverse();
-			var links = tree.links(nodes);
-			
-			nodes.forEach(function(n){
-				treeEnter.append("circle")
-					.attr("class", "node")
-					.attr("cx",n.x-50)
-					.attr("cy",n.y+30)
-					.attr("r",5);
-					
-			})
-
-			links.forEach(function(l){
-				treeEnter.insert("svg:line")
-				.attr("class", "link")
-				.attr("x1",l.target.x -50)
-				.attr("y1",l.target.y +30)
-				.attr("x2",l.source.x -50)
-				.attr("y2",l.source.y +30);
-					
-			})
+	
+	
+tree.each(function(d){
+ 		this.data = getData();
+		var sector = Math.abs(d.endAngle-d.startAngle);
+		//if sector 2*PI w reduces to 0, as sin(PI) = 0, maximum with sector of PI as sin(PI/2) = 1
+		if(sector > Math.PI)
+		{
+			sector = Math.PI;
+		}
+		var w = Math.sin(sector/2)*radius*2;
+		
+		var h = 50;
+ 		this.skilltree = d3.layout.tree()
+			.size([w, 100]);
+ 		var nodes = this.skilltree.nodes(this.data).reverse();
+		nodes.forEach(function(d) { d.y = d.depth * h;d.x = d.x - w/2; });
+		var links = this.skilltree.links(nodes);
+		tree.selectAll("circle").remove();
+		tree.selectAll("line").remove();
+		
+		links.forEach(function(l){
+			tree.insert("svg:line")
+			.attr("class", "link")
+			.attr("x1",l.target.x)
+			.attr("y1",l.target.y)
+			.attr("x2",l.source.x)
+			.attr("y2",l.source.y);
+				
+		});
+		nodes.forEach(function(n){
+			tree.append("circle")
+				.attr("class", "node")
+				.attr("cx",n.x)
+				.attr("cy",n.y)
+				.attr("r",8)
+				.attr("var",n.var);
+				
+		});
   	})
   	
-tree.attr("transform",function(d){
-  		this.pos = arc.centroid(d);
-  		this.angle = midAngle(d);
-  		return "translate( " + this.pos[0] + " " + this.pos[1]+" ) rotate("+(((this.angle*180)/Math.PI) - 180)+")"}
-  		);
 
+tree.transition().duration(animationTime)
+	.attrTween("transform", function(d) {
+		this.angle = this.angle || 2*Math.PI;
+		var interpolateangle = d3.interpolate(this.angle, midAngle(d));
+		this.angle = midAngle(d);
+		return function(t) {
+			var ang = interpolateangle(t);
+			return "translate( " + Math.cos(ang-Math.PI/2)*radius*0.7 + " " + Math.sin(ang-Math.PI/2)*radius*0.7+" ) rotate("+(((ang*180)/Math.PI) - 180)+")";
+		};
+	})
 tree.exit()
 	.remove();
+	
+d3.selectAll(".node")
+	.on("click", function(){
+		 d3.select(this).style("fill", "DeepSkyBlue");
+});
 }
-/* ------- TEXT LABELS -------
-
-var text = svg.select(".labels").selectAll("text")
-	.data(pie(data), key);
-
-text.enter()
-	.append("text")
-	.attr("dy", ".35em")
-	.text(function(d) {
-		return d.data.label;
-	})
-	.each(function(d){
-  	this._current = {
-    	startAngle: 2*Math.PI,
-    	endAngle: 2*Math.PI
-  	}});
-
-function midAngle(d){
-	return d.startAngle + (d.endAngle - d.startAngle)/2;
-}
-
-text.transition().duration(animationTime)
-	.attrTween("transform", function(d) {
-		this._current = this._current || d;
-		var interpolate = d3.interpolate(this._current, d);
-		this._current = interpolate(0);
-		return function(t) {
-			var d2 = interpolate(t);
-			var pos = outerArc.centroid(d2);
-			pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
-			return "translate("+ pos +")";
-		};
-	})
-	.styleTween("text-anchor", function(d){
-		this._current = this._current || d;
-		var interpolate = d3.interpolate(this._current, d);
-		this._current = interpolate(0);
-		return function(t) {
-			var d2 = interpolate(t);
-			return midAngle(d2) < Math.PI ? "start":"end";
-		};
-	});
-
-
-text.exit()
-	.remove();
-	*/
-
-/* ------- SLICE TO TEXT POLYLINES -------
-
-var polyline = svg.select(".lines").selectAll("polyline")
-	.data(pie(data), key);
-
-polyline.enter()
-	.append("polyline")
-	.each(function(d){
-  	this._current = {
-    	startAngle: 2*Math.PI,
-    	endAngle: 2*Math.PI
-  	}});
-
-polyline.transition().duration(animationTime)
-	.attrTween("points", function(d){
-		this._current = this._current || d;
-		var interpolate = d3.interpolate(this._current, d);
-		this._current = interpolate(0);
-		return function(t) {
-			var d2 = interpolate(t);
-			var pos = outerArc.centroid(d2);
-			pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-			return [arc.centroid(d2), outerArc.centroid(d2), pos];
-		};			
-	});
-
-polyline.exit()
-	.remove();
-};*/
 
 function getData() {
 	return {
@@ -255,11 +203,47 @@ function getData() {
 	        "children": [
 	        	{
 	        	"name": "c1",
-	        	"var": 12
+	        	"var": 0,
+				"children": [
+					{
+					"name": "c1",
+					"var": 0,
+					"children": [
+						{
+						"name": "c1",
+						"var": 0
+						},
+						{
+						"name": "c2",
+						"var": 0
+						}
+					]
+					},
+					{
+					"name": "c2",
+					"var": 0,
+					"children": [
+						{
+						"name": "c1",
+						"var": 0
+						},
+						{
+						"name": "c2",
+						"var": 0
+						}
+					]
+					}
+				]
 	    		},
 	        	{
 	        	"name": "c2",
-	        	"var": 12
+	        	"var": 0,
+				"children": [
+					{
+					"name": "c1",
+					"var": 0
+					}
+				]
 	    		}
 	       	]
 	};
