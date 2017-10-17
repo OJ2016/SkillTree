@@ -1,22 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Skill Tree</title>
-	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
-	<script src="/jquery/dist/jquery.js"></script>
-	<script src="/bootstrap/dist/js/bootstrap.js"></script>
-</head>
-<body>
-	<div class="container">
-		<h1>Skill Tree</h1>
-		Browse view
-		<ul>
-			<%	for (var i = 0; i < content.classes.length; i++) { %>
-				<li><a href="/class/<%=content.classes[i].id%>"><%= content.classes[i].desc %></a></li>
-			<% } %>
-		</ul>
 
-	</div>
+<head>
+    <meta charset="UTF-8">
+    <title>Skill Tree</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <script src="/jquery/dist/jquery.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="js/browse.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">SkillTree</a>
+            </div>
+            <form class="navbar-form navbar-left">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+<div class="container">
+    <div class="well well-sm">
+        <strong>Display</strong>
+        <div class="btn-group">
+            <a href="#" id="list" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list">
+            </span>List</a> <a href="#" id="grid" class="btn btn-default btn-sm"><span
+                class="glyphicon glyphicon-th"></span>Grid</a>
+        </div>
+    </div>
+    <div id="products" class="row list-group">
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/worrier_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Worrier Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/mage_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Mage Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/hunter_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Hunter Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/hunter_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Hunter Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/mage_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Mage Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                <img class="group list-group-image" src="/resources/images/worrier_sigil.jpg" alt="" />
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Worrier Class</h4>
+                    <p class="group inner list-group-item-text">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+
 </html>
