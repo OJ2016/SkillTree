@@ -190,16 +190,16 @@ var treeEnter = tree.enter()
 tree.each(function(d){
  		this.tdata = d.data.treeData;
 		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
-		if(sector > 3*Math.PI/4)
+		if(sector > Math.PI)
 		{
-			sector = 3*Math.PI/4;
+			sector = Math.PI;
 		}
 		var h = 50;
  		this.skilltree = d3.layout.tree()
 			.size([sector, 250]);
  		var nodes = this.skilltree.nodes(this.tdata).reverse();
 		nodes.forEach(function(d) {	
-			var angle = d.x+sector/4;
+			var angle = (d.x-sector/2)+Math.PI/2;
 			var radius = d.y;
 			d.x = Math.cos(angle)*radius;
 			d.y = Math.sin(angle)*radius;
