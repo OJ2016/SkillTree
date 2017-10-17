@@ -1,7 +1,7 @@
 $(document).ready(function() {
     console.log(content);
 
-    var svg = d3.select("body")
+    var svg = d3.select("#class-diagram")
         .append("svg")
         .append("g")
 
@@ -11,7 +11,7 @@ $(document).ready(function() {
         .attr("class", "trees");
 
     var width = 960,
-        height = 450,
+        height = 600,
         radius = Math.min(width, height) / 3;
     var animationTime = 300;
     var pie = d3.layout.pie()

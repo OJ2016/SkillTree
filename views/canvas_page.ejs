@@ -1,72 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>Skill Tree</title>
-	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
-	<script src="/jquery/dist/jquery.js"></script>
-	<script src="/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="/js/d3.v3.min.js"></script>
-	<!-- Make some content accessible for clientside JS-->
-	<script type="text/javascript">var content =<%-JSON.stringify(content.client)%></script>
-	<script src="/js/app.js"></script>
-
-	<style>
-
-		body {
-		  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-		  width: 960px;
-		  height: 500px;
-		  position: relative;
-		}
-
-		svg {
-			width: 100%;
-			height: 100%;
-		}
-
-		path.slice{
-			stroke-width:2px;
-		}
-		.link {
-		    fill: none;
-		    stroke: steelblue;
-		    stroke-width: 1.5px;
-		}
-		.node {
-		    fill: #fff;
-		    stroke: steelblue;
-		    stroke-width: 1.5px;
-		}
-		polyline{
-			opacity: .3;
-			stroke: black;
-			stroke-width: 2px;
-			fill: none;
-		}
-		circle:hover{
-        stroke: red;
-      }
-
-	</style>
+    <meta charset="UTF-8">
+    <title>Skill Tree</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/styles/app.css">
+    <script src="/jquery/dist/jquery.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/js/d3.v3.min.js"></script>
+    <script type="text/javascript">
+    var content = <%-JSON.stringify(content.client)%>
+    </script>
+    <script src="/js/app.js"></script>
 </head>
+
 <body>
-	<div class="container">
-		<h1>Canvas Page</h1>
-		<h3>Hello user: <%= content.user.username%></h3>
-		<p>Has canvas with avatar and class functionality</p>
-
-		<p>Canvas goes here!</p>
-
-		<a href="/browse">Browse all Classes!</a>
-
-		<hr>
-		<button class="randomize">randomize</button>
-		<button class="append">append</button>
-		<button class="remove">remove</button>
-
-
-
-	</div>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">SkillTree</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/browse">Browse</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <button class="randomize">randomize</button>
+            <button class="append">append</button>
+            <button class="remove">remove</button>
+        </div>
+        <div class="row">
+            <div id="class-diagram" class="well"></div>
+        </div>
+    </div>
 </body>
+
 </html>
