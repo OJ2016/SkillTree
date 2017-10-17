@@ -6,6 +6,8 @@ $( document ).ready(function() {
 
 var svg = d3.select("body")
 	.append("svg")
+	.attr("width",  "100%")
+    .attr("height", "100%")
 	.append("g")
 
 svg.append("g")
@@ -13,11 +15,15 @@ svg.append("g")
 svg.append("g")
 	.attr("class", "trees");
 
-var width = 960,
-    height = 450,
-	radius = Math.min(width, height) / 3;
+var width = parseInt(d3.select("body").select("svg").style("width"), 10);
+var height = parseInt(d3.select("body").select("svg").style("height"), 10);
+	radius = Math.min(width, height) / 6;
+	
+console.log(height)
 var animationTime = 300;
 var pie = d3.layout.pie()
+	.startAngle(-Math.PI/2)
+	.endAngle(3*Math.PI/2)
 	.sort(null)
 	.value(function(d) {
 		return d.value;
@@ -25,16 +31,15 @@ var pie = d3.layout.pie()
 
 var arc = d3.svg.arc()
 	.outerRadius(radius * 0.8)
-	.innerRadius(radius * 0.4);
+	.innerRadius(radius * 0.4)
 
 var outerArc = d3.svg.arc()
 	.innerRadius(radius * 0.9)
-	.outerRadius(radius * 0.9);
+	.outerRadius(radius * 0.9)
 
-var root = getData();
-
-
-
+var lockedColor = "#838c89";
+var availableColor = "#177177";
+var chosenColor = "#3f97b5";
 
 svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -47,16 +52,19 @@ var color = d3.scale.ordinal()
 var curdata;
 
 function randomData (){
-	var labels = color.domain().slice(0,Math.round(Math.random()*11));
+	var labels = color.domain().slice(0,Math.round(Math.random()*6));
 	curdata = labels.map(function(label){
-		return { label: label, value: 1}
+		return { label: label, value: 1,treeData: getData()}
 	});
 	return curdata;
 }
 
 function append(){
+	if(curdata.length < 6)
+	{
 	var labels = color.domain();
-	curdata.push({ label: labels[curdata.length], value: 1 });
+	curdata.push({ label: labels[curdata.length], value: 1 ,treeData:getData()});
+	}
 	return curdata;
 }
 
@@ -82,7 +90,33 @@ d3.select(".remove")
 		change(remove());
 });
 
-
+function nodeColor(nodevar)
+{
+	if(nodevar == 0)
+	{
+		return lockedColor;
+	}
+	if(nodevar == 1)
+	{
+		return availableColor;
+	}
+	if(nodevar == 2)
+	{
+		return chosenColor;
+	}
+}
+function edgeColor(var1,var2)
+{
+	if(var1 + var2 > 1)
+	{
+		return chosenColor;
+	}
+	else
+	{
+		return lockedColor;
+	}
+	
+}
 
 function change(data) {
 /* ------- PIE SLICES -------*/
@@ -95,13 +129,12 @@ var slice = svg.select(".slices").selectAll("path.slice")
 	  return color(d.data.label);
 	})
 	.attr("class", "slice")
+	.attr("id", function(d,i) { return "class_"+i; }) //Give each slice a unique ID
 	.each(function(d){
 	 	this._current = {
-	    	startAngle: 2*Math.PI,
-	    	endAngle: 2*Math.PI
+	    	startAngle: 3*Math.PI/2,
+	    	endAngle: 3*Math.PI/2
   	};
-
-
 });
 
 slice
@@ -118,7 +151,17 @@ slice
 	};
 })
 
-slice.exit()
+slice.exit().transition().duration(animationTime)
+	.attrTween("d", function(d) {
+		var endAt = { //<-- have the arc end where it's supposed to
+	    startAngle: d.endAngle, 
+	    endAngle: d.endAngle
+	 };
+	var interpolate = d3.interpolate(this._current, endAt);
+	return function(t) {
+	return arc(interpolate(t));
+	};
+})
 	.remove();
 
 function midAngle(d){
@@ -130,16 +173,14 @@ var tree = svg.select(".trees").selectAll("g.tree")
 
 var treeEnter = tree.enter()
 	.insert("g")
-	.attr("class", "tree");
-treeEnter.append("text")
-	.attr("dy", ".35em")
-	.text(function(d) {
-		return d.data.label;
-	})
-	
+	.attr("class", "tree")
+	.attr("id", function(d,i){return "tree_"+i;})
+	.each(function(d){this.angle = 3*Math.PI/2});
+
+
 	
 tree.each(function(d){
- 		this.data = getData();
+ 		this.tdata = d.data.treeData;
 		var sector = Math.abs(d.endAngle-d.startAngle);
 		//if sector 2*PI w reduces to 0, as sin(PI) = 0, maximum with sector of PI as sin(PI/2) = 1
 		if(sector > Math.PI)
@@ -150,9 +191,9 @@ tree.each(function(d){
 		
 		var h = 50;
  		this.skilltree = d3.layout.tree()
-			.size([w, 100]);
- 		var nodes = this.skilltree.nodes(this.data).reverse();
-		nodes.forEach(function(d) { d.y = d.depth * h;d.x = d.x - w/2; });
+			.size([w, 200]);
+ 		var nodes = this.skilltree.nodes(this.tdata).reverse();
+		nodes.forEach(function(d) {d.x = d.x - w/2; });
 		var links = this.skilltree.links(nodes);
 		tree.selectAll("circle").remove();
 		tree.selectAll("line").remove();
@@ -163,7 +204,9 @@ tree.each(function(d){
 			.attr("x1",l.target.x)
 			.attr("y1",l.target.y)
 			.attr("x2",l.source.x)
-			.attr("y2",l.source.y);
+			.attr("y2",l.source.y)
+			.style("stroke",edgeColor(l.target.var,l.source.var));
+			
 				
 		});
 		nodes.forEach(function(n){
@@ -171,81 +214,93 @@ tree.each(function(d){
 				.attr("class", "node")
 				.attr("cx",n.x)
 				.attr("cy",n.y)
-				.attr("r",8)
-				.attr("var",n.var);
-				
+				.attr("r",10)
+				.style("fill",nodeColor(n.var))
+				.style("stroke",nodeColor(n.var));
 		});
   	})
-  	
 
 tree.transition().duration(animationTime)
 	.attrTween("transform", function(d) {
-		this.angle = this.angle || 2*Math.PI;
 		var interpolateangle = d3.interpolate(this.angle, midAngle(d));
 		this.angle = midAngle(d);
 		return function(t) {
 			var ang = interpolateangle(t);
-			return "translate( " + Math.cos(ang-Math.PI/2)*radius*0.7 + " " + Math.sin(ang-Math.PI/2)*radius*0.7+" ) rotate("+(((ang*180)/Math.PI) - 180)+")";
+			return "translate( " + Math.cos(ang-Math.PI/2)*radius*0.8 + " " + Math.sin(ang-Math.PI/2)*radius*0.8+" ) rotate("+(((ang*180)/Math.PI) - 180)+")";
 		};
 	})
 tree.exit()
 	.remove();
-	
+
+var classnames = svg.selectAll(".className")
+.data(pie(data), key)
+var classnamesenter = classnames.enter()
+					.append("text")
+					.attr("class", "className")
+					.attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.8;})  
+					.attr("dy", radius*0.15)
+					.append("textPath")
+					.style("text-anchor","middle")
+					.attr("xlink:href",function(d,i){return "#class_"+i;})
+					.text(function(d){return d.data.treeData.name;});
+classnames.transition().duration(animationTime).attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.7;})  
+classnames.exit().remove();
 d3.selectAll(".node")
 	.on("click", function(){
-		 d3.select(this).style("fill", "DeepSkyBlue");
+		d3.select(this).style("fill", "DeepSkyBlue");
 });
 }
 
 function getData() {
 	return {
 	    "name": "root",
-	        "children": [
-	        	{
-	        	"name": "c1",
-	        	"var": 0,
-				"children": [
-					{
-					"name": "c1",
-					"var": 0,
-					"children": [
-						{
-						"name": "c1",
-						"var": 0
-						},
-						{
-						"name": "c2",
-						"var": 0
-						}
-					]
-					},
-					{
-					"name": "c2",
-					"var": 0,
-					"children": [
-						{
-						"name": "c1",
-						"var": 0
-						},
-						{
-						"name": "c2",
-						"var": 0
-						}
-					]
-					}
-				]
-	    		},
-	        	{
-	        	"name": "c2",
-	        	"var": 0,
+		"var": 2,
+		"children": [
+			{
+			"name": "c1",
+			"var": 1,
+			"children": [
+				{
+				"name": "c1",
+				"var": 0,
 				"children": [
 					{
 					"name": "c1",
 					"var": 0
+					},
+					{
+					"name": "c2",
+					"var": 0
 					}
 				]
-	    		}
-	       	]
+				},
+				{
+				"name": "c2",
+				"var": 0,
+				"children": [
+					{
+					"name": "c1",
+					"var": 0
+					},
+					{
+					"name": "c2",
+					"var": 0
+					}
+				]
+				}
+			]
+			},
+			{
+			"name": "c2",
+			"var": 1,
+			"children": [
+				{
+				"name": "c1",
+				"var": 0
+				}
+			]
+			}
+		]
 	};
 	}
 
