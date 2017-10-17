@@ -189,19 +189,21 @@ var treeEnter = tree.enter()
 	
 tree.each(function(d){
  		this.tdata = d.data.treeData;
-		var sector = Math.abs(d.endAngle-d.startAngle);
-		//if sector 2*PI w reduces to 0, as sin(PI) = 0, maximum with sector of PI as sin(PI/2) = 1
-		if(sector > Math.PI)
+		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
+		if(sector > 3*Math.PI/4)
 		{
-			sector = Math.PI;
+			sector = 3*Math.PI/4;
 		}
-		var w = Math.sin(sector/2)*radius*2;
-		
 		var h = 50;
  		this.skilltree = d3.layout.tree()
-			.size([w, 200]);
+			.size([sector, 250]);
  		var nodes = this.skilltree.nodes(this.tdata).reverse();
-		nodes.forEach(function(d) {d.x = d.x - w/2; });
+		nodes.forEach(function(d) {	
+			var angle = d.x+sector/4;
+			var radius = d.y;
+			d.x = Math.cos(angle)*radius;
+			d.y = Math.sin(angle)*radius;
+			});
 		var links = this.skilltree.links(nodes);
 		tree.selectAll("circle").remove();
 		tree.selectAll("line").remove();
@@ -314,12 +316,36 @@ function getData() {
 			"children": [
 				{
 				"name": "name",
-				"var": 0
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"var": 0
+					},
+					{
+					"name": "name",
+					"var": 0
+					}
+				]
+				},
+				{
+				"name": "name",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"var": 0
+					},
+					{
+					"name": "name",
+					"var": 0
+					}
+				]
 				}
 			]
 			}
 		]
 	};
-	}
+}
 
 });
