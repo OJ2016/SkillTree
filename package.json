@@ -147,6 +147,7 @@
       "resolved": "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz",
       "version": "0.5.2"
     },
+    "fs": "0.0.1-security",
     "http-errors": {
       "dependencies": {
         "setprototypeof": {
@@ -237,6 +238,7 @@
       "resolved": "https://registry.npmjs.org/mongodb-core/-/mongodb-core-2.1.15.tgz",
       "version": "2.1.15"
     },
+    "mongoose": "^4.12.4",
     "ms": {
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
