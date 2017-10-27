@@ -12,11 +12,161 @@ svg.append("g")
 	.attr("class", "slices");
 svg.append("g")
 	.attr("class", "trees");
-
+ClassesData_orig = [{
+	    "name": "ClassName1",
+		"id":"0",
+		"var": 2,
+		"color":"#98abc5",
+		"value":1,
+		"children": [
+			{
+			"name": "name",
+			"id":"0.0",
+			"var": 1,
+			"children": [
+				{
+				"name": "name",
+				"id":"0.0.0",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"0.0.0.0",
+					"var": 0
+					},
+					{
+					"name": "nf2",
+					"id":"0.0.0.1",
+					"var": 0
+					}
+				]
+				},
+				{
+				"name": "name",
+				"id":"0.0.1",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"0.0.1.0",
+					"var": 0
+					},
+					{
+					"name": "name",
+					"id":"0.0.1.1",
+					"var": 0
+					}
+				]
+				}
+			]
+			}
+		]
+	}, {
+	    "name": "ClassName2",
+		"id":"1",
+		"var": 2,
+		"color":"#aaaaaa",
+		"value":1,
+		"children": [
+			{
+			"name": "name",
+			"id":"1.0",
+			"var": 1,
+			"children": [
+				{
+				"name": "name",
+				"id":"1.0.0",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"1.0.0.0",
+					"var": 0
+					},
+					{
+					"name": "namhhhe",
+					"id":"1.0.0.1",
+					"var": 0
+					}
+				]
+				},
+				{
+				"name": "name",
+				"id":"1.0.1",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"1.0.1.0",
+					"var": 0
+					},
+					{
+					"name": "name",
+					"id":"1.0.1.1",
+					"var": 0
+					}
+				]
+				}
+			]
+			}
+		]
+		}
+		, {
+	    "name": "ClassName3",
+		"id":"2",
+		"var": 2,
+		"color":"#aaaaff",
+		"value":1,
+		"children": [
+			{
+			"name": "name",
+			"id":"2.0",
+			"var": 1,
+			"children": [
+				{
+				"name": "name",
+				"id":"2.0.0",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"2.0.0.0",
+					"var": 0
+					},
+					{
+					"name": "namhhhe",
+					"id":"2.0.0.1",
+					"var": 0
+					}
+				]
+				},
+				{
+				"name": "name",
+				"id":"2.0.1",
+				"var": 0,
+				"children": [
+					{
+					"name": "name",
+					"id":"2.0.1.0",
+					"var": 0
+					},
+					{
+					"name": "name",
+					"id":"2.0.1.1",
+					"var": 0
+					}
+				]
+				}
+			]
+			}
+		]
+		}
+	];
+ClassesData = ClassesData_orig;
 var width = parseInt(d3.select("#class-diagram").select("svg").style("width"), 10);
 var height = parseInt(d3.select("#class-diagram").select("svg").style("height"), 10);
 	radius = Math.min(width, height) / 6;
-	
+
 console.log(height)
 var animationTime = 300;
 var pie = d3.layout.pie()
@@ -41,41 +191,13 @@ var chosenColor = "#3f97b5";
 
 svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-var key = function(d){ return d.data.label; };
-
-var color = d3.scale.ordinal()
-.domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt"])
-.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-var curdata;
-
-function randomData (){
-	var labels = color.domain().slice(0,Math.round(Math.random()*6));
-	curdata = labels.map(function(label){
-		return { label: label, value: 1,treeData: getData()}
-	});
-	return curdata;
-}
-
-function append(){
-	if(curdata.length < 6)
-	{
-	var labels = color.domain();
-	curdata.push({ label: labels[curdata.length], value: 1 ,treeData:getData()});
-	}
-	return curdata;
-}
-
-function remove(){
-	curdata = curdata.slice(0,curdata.length-1);
-	return curdata;
-}
-
-change(randomData());
+change(ClassesData);
 
 d3.select(".randomize")
 	.on("click", function(){
-		change(randomData());
+		removeAll();
+		ClassesData = ClassesData_orig;
+		change(ClassesData);
 });
 
 d3.select(".append")
@@ -87,7 +209,68 @@ d3.select(".remove")
 	.on("click", function(){
 		change(remove());
 });
-
+function idMatch(id1,id2)
+{
+	//returns 0 if no match
+	//returns 1 if id2 is the beginning of id1
+	//returns 2 if identical
+	if(id1 == id2){
+		return 2;
+	}
+	if(id1.startsWith(id2))
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+	
+}
+function updateClassesData(id,list)
+{
+	for(var n = 0;n<list.length;n++)
+	{
+		var match = idMatch(id,list[n].id);
+		if(match == 2)
+		{
+			list[n].var = 2;
+			change(ClassesData);
+			return 1;
+		}
+		else if(match == 1)
+		{
+			if(updateClassesData(id,list[n].children)==1)
+			{
+				return 1;
+			}
+		}
+	}
+	return 0
+}
+function SelectClass(id)
+{
+	var n = Number(id.substring(6));
+	for(var i=0;i<ClassesData.length;i++)
+	{
+		if(i != n)
+		{
+			ClassesData[i].value = 1;
+		}
+		else
+		{
+			if(ClassesData[i].value > 1)
+			{
+				ClassesData[i].value = 1;
+			}
+			else
+			{
+				ClassesData[i].value = 10;
+			}
+		}
+	}
+	change(ClassesData);
+}
 function nodeColor(nodevar)
 {
 	if(nodevar == 0)
@@ -115,7 +298,7 @@ function edgeColor(var1,var2)
 	}
 	
 }
-
+var key = function(d){ return d.data.id; };
 function computeTextTransform(sx,sy,tx,ty)
 {
 	var midx = (tx+sx)/2;
@@ -125,16 +308,21 @@ function computeTextTransform(sx,sy,tx,ty)
 	
 	return "translate("+midx+","+midy+") rotate("+ang+")";
 }
-
+function removeAll()
+{
+	svg.select(".slices").selectAll("path.slice").remove();
+	svg.select(".trees").selectAll("g.tree").remove();
+	svg.selectAll(".className").remove();
+}
 function change(data) {
 /* ------- PIE SLICES -------*/
 var slice = svg.select(".slices").selectAll("path.slice")
-	.data(pie(data), key);
+	.data(pie(data),key);
 
   slice.enter()
 	.insert("path")
 	.style("fill", function(d) {
-	  return color(d.data.label);
+	  return d.data.color;
 	})
 	.attr("class", "slice")
 	.attr("id", function(d,i) { return "class_"+i; }) //Give each slice a unique ID
@@ -159,17 +347,7 @@ slice
 	};
 })
 
-slice.exit().transition().duration(animationTime)
-	.attrTween("d", function(d) {
-		var endAt = { //<-- have the arc end where it's supposed to
-	    startAngle: d.endAngle, 
-	    endAngle: d.endAngle
-	 };
-	var interpolate = d3.interpolate(this._current, endAt);
-	return function(t) {
-	return arc(interpolate(t));
-	};
-})
+slice.exit()
 	.remove();
 
 function midAngle(d){
@@ -177,40 +355,39 @@ function midAngle(d){
 }
 
 var tree = svg.select(".trees").selectAll("g.tree")
-	.data(pie(data), key);
+	.data(pie(data),key);
 
 var treeEnter = tree.enter()
 	.insert("g")
 	.attr("class", "tree")
 	.attr("id", function(d,i){return "tree_"+i;})
 	.each(function(d){this.angle = 3*Math.PI/2});
-
-
 	
-tree.each(function(d){
- 		this.tdata = d.data.treeData;
+tree.each(function(d,i){
+		d3.select("#tree_"+i).selectAll("circle").remove();
+		d3.select("#tree_"+i).selectAll("line").remove();
+		d3.select("#tree_"+i).selectAll("text").remove();
+		
 		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
 		if(sector > Math.PI)
 		{
 			sector = Math.PI;
 		}
 		var h = 50;
- 		this.skilltree = d3.layout.tree()
+ 		var skilltree = d3.layout.tree()
 			.size([sector, 250]);
- 		var nodes = this.skilltree.nodes(this.tdata).reverse();
+ 		var nodes = skilltree.nodes(d.data).reverse();
 		nodes.forEach(function(d) {	
 			var angle = (d.x-sector/2)+Math.PI/2;
 			var radius = d.y;
 			d.x = Math.cos(angle)*radius;
 			d.y = Math.sin(angle)*radius;
 			});
-		var links = this.skilltree.links(nodes);
-		tree.selectAll("circle").remove();
-		tree.selectAll("line").remove();
-		tree.selectAll("text").remove();
+		var links = skilltree.links(nodes);
+		
 		
 		links.forEach(function(l){
-			tree.insert("svg:line")
+			d3.select("#tree_"+i).insert("svg:line")
 			.attr("class", "link")
 			.attr("x1",l.target.x)
 			.attr("y1",l.target.y)
@@ -218,17 +395,18 @@ tree.each(function(d){
 			.attr("y2",l.source.y)
 			.style("stroke",edgeColor(l.target.var,l.source.var));
 			
-			tree.insert("text")
+			d3.select("#tree_"+i).insert("text")
 			.style("text-anchor","middle")
 			.attr("transform", computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y))
 			.text(l.target.name);
 		});
 		nodes.forEach(function(n){
-			tree.append("circle")
+			d3.select("#tree_"+i).append("circle")
 				.attr("class", "node")
 				.attr("cx",n.x)
 				.attr("cy",n.y)
 				.attr("r",5)
+				.attr("id",n.id)
 				.style("fill",nodeColor(n.var))
 				.style("stroke",nodeColor(n.var));
 		});
@@ -247,7 +425,7 @@ tree.exit()
 	.remove();
 
 var classnames = svg.selectAll(".className")
-.data(pie(data), key)
+.data(pie(data),key)
 var classnamesenter = classnames.enter()
 					.append("text")
 					.attr("class", "className")
@@ -256,12 +434,17 @@ var classnamesenter = classnames.enter()
 					.append("textPath")
 					.style("text-anchor","middle")
 					.attr("xlink:href",function(d,i){return "#class_"+i;})
-					.text(function(d){return d.data.treeData.name;});
+					.text(function(d){return d.data.name;});
 classnames.transition().duration(animationTime).attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.7;})  
 classnames.exit().remove();
+d3.selectAll(".slice")
+	.on("click", function(){
+		SelectClass(d3.select(this).attr("id"));
+	})
 d3.selectAll(".node")
 	.on("click", function(){
 		d3.select(this).style("fill", chosenColor)
+		updateClassesData(d3.select(this).attr("id"),ClassesData);
 	})
 	.on("mouseover", function(){
 		d3.select(this).style("stroke", "red");
@@ -271,81 +454,7 @@ d3.selectAll(".node")
 	});
 }
 
-function getData() {
-	return {
-	    "name": "ClassName",
-		"var": 2,
-		"children": [
-			{
-			"name": "name",
-			"var": 1,
-			"children": [
-				{
-				"name": "name",
-				"var": 0,
-				"children": [
-					{
-					"name": "name",
-					"var": 0
-					},
-					{
-					"name": "name",
-					"var": 0
-					}
-				]
-				},
-				{
-				"name": "name",
-				"var": 0,
-				"children": [
-					{
-					"name": "name",
-					"var": 0
-					},
-					{
-					"name": "name",
-					"var": 0
-					}
-				]
-				}
-			]
-			},
-			{
-			"name": "name",
-			"var": 1,
-			"children": [
-				{
-				"name": "name",
-				"var": 0,
-				"children": [
-					{
-					"name": "name",
-					"var": 0
-					},
-					{
-					"name": "name",
-					"var": 0
-					}
-				]
-				},
-				{
-				"name": "name",
-				"var": 0,
-				"children": [
-					{
-					"name": "name",
-					"var": 0
-					},
-					{
-					"name": "name",
-					"var": 0
-					}
-				]
-				}
-			]
-			}
-		]
-	};
-}
+
+
 
 });
