@@ -163,6 +163,8 @@ ClassesData = [{
 		}
 	];
 var userData = ["0","0.0","0.0.0","1","2"];
+var focusedID = null;
+
 var width = parseInt(d3.select("#class-diagram").select("svg").style("width"), 10);
 var height = parseInt(d3.select("#class-diagram").select("svg").style("height"), 10);
 	radius = Math.min(width, height) / 6;
@@ -193,7 +195,7 @@ svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 applyUserData(userData);
 
-change(ClassesData);
+setFocusTree(focusedID);
 
 d3.select(".randomize")
 	.on("click", function(){
@@ -311,6 +313,60 @@ function updateClassesData(id,list)
 		}
 		change(ClassesData);
 	}
+}
+function setFocusTree(treeid)
+{
+	for(var i=0;i<ClassesData.length;i++)
+	{
+		if(ClassesData[i].id != treeid)
+		{
+			ClassesData[i].value = 1;
+		}
+		else
+		{
+			if(ClassesData[i].value > 1)
+			{
+				ClassesData[i].value = 1;
+				focusedID = null;
+			}
+			else
+			{
+				ClassesData[i].value = 100;
+				focusedID = ClassesData[i].id;
+			}
+		}
+	}
+	change(ClassesData);
+}
+
+function setFocusSlice(sliceid)
+{
+	var n = -1;
+	if(sliceid)
+	{
+		var n = Number(sliceid.substring(6));
+	}
+	for(var i=0;i<ClassesData.length;i++)
+	{
+		if(i != n)
+		{
+			ClassesData[i].value = 1;
+		}
+		else
+		{
+			if(ClassesData[i].value > 1)
+			{
+				ClassesData[i].value = 1;
+				focusedID = null;
+			}
+			else
+			{
+				ClassesData[i].value = 100;
+				focusedID = ClassesData[i].id;
+			}
+		}
+	}
+	change(ClassesData);
 }
 function SelectClass(id)
 {
@@ -536,7 +592,7 @@ d3.selectAll(".slice")
 	})
 d3.selectAll(".node")
 	.on("click", function(){
-		updateClassesData(d3.select(this).attr("id"),ClassesData);
+		setFocusSlice(d3.select(this).attr("id"));
 	})
 	.on("mouseover", function(){
 		d3.select(this).style("stroke", "red");
