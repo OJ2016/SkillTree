@@ -15,14 +15,14 @@ svg.append("g")
 ClassesData_orig = [{
 	    "name": "ClassName1",
 		"id":"0",
-		"var": 2,
+		"var": 0,
 		"color":"#98abc5",
 		"value":1,
 		"children": [
 			{
 			"name": "name",
 			"id":"0.0",
-			"var": 1,
+			"var": 0,
 			"children": [
 				{
 				"name": "name",
@@ -64,14 +64,14 @@ ClassesData_orig = [{
 	}, {
 	    "name": "ClassName2",
 		"id":"1",
-		"var": 2,
+		"var": 0,
 		"color":"#aaaaaa",
 		"value":1,
 		"children": [
 			{
 			"name": "name",
 			"id":"1.0",
-			"var": 1,
+			"var": 0,
 			"children": [
 				{
 				"name": "name",
@@ -114,14 +114,14 @@ ClassesData_orig = [{
 		, {
 	    "name": "ClassName3",
 		"id":"2",
-		"var": 2,
+		"var": 0,
 		"color":"#aaaaff",
 		"value":1,
 		"children": [
 			{
 			"name": "name",
 			"id":"2.0",
-			"var": 1,
+			"var": 0,
 			"children": [
 				{
 				"name": "name",
@@ -364,52 +364,51 @@ var treeEnter = tree.enter()
 	.each(function(d){this.angle = 3*Math.PI/2});
 	
 tree.each(function(d,i){
-		d3.select("#tree_"+i).selectAll("circle").remove();
-		d3.select("#tree_"+i).selectAll("line").remove();
-		d3.select("#tree_"+i).selectAll("text").remove();
-		
 		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
 		if(sector > Math.PI)
 		{
 			sector = Math.PI;
 		}
-		var h = 50;
- 		var skilltree = d3.layout.tree()
+		var skilltree = d3.layout.tree()
 			.size([sector, 250]);
  		var nodes = skilltree.nodes(d.data).reverse();
-		nodes.forEach(function(d) {	
-			var angle = (d.x-sector/2)+Math.PI/2;
-			var radius = d.y;
-			d.x = Math.cos(angle)*radius;
-			d.y = Math.sin(angle)*radius;
+		nodes.forEach(function(n) {	
+			var angle = (n.x-sector/2)+Math.PI/2;
+			var radius = n.y;
+			n.x = Math.cos(angle)*radius;
+			n.y = Math.sin(angle)*radius;
 			});
 		var links = skilltree.links(nodes);
 		
-		
-		links.forEach(function(l){
-			d3.select("#tree_"+i).insert("svg:line")
+		var link = d3.select("#tree_"+i).selectAll(".link").data(links);
+		var linksenter = link.enter().insert("svg:line")
 			.attr("class", "link")
-			.attr("x1",l.target.x)
-			.attr("y1",l.target.y)
-			.attr("x2",l.source.x)
-			.attr("y2",l.source.y)
-			.style("stroke",edgeColor(l.target.var,l.source.var));
+			.attr("x1",function(l){ return l.target.x})
+			.attr("y1",function(l){ return l.target.y})
+			.attr("x2",function(l){ return l.source.x})
+			.attr("y2",function(l){ return l.source.y})
+			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)});
+		link.transition().duration(animationTime)
+			.attr("x1",function(l){ return l.target.x})
+			.attr("y1",function(l){ return l.target.y})
+			.attr("x2",function(l){ return l.source.x})
+			.attr("y2",function(l){ return l.source.y})
+			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)});
 			
-			d3.select("#tree_"+i).insert("text")
-			.style("text-anchor","middle")
-			.attr("transform", computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y))
-			.text(l.target.name);
-		});
-		nodes.forEach(function(n){
-			d3.select("#tree_"+i).append("circle")
+		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
+		var nodeenter = node.enter().append("circle")
 				.attr("class", "node")
-				.attr("cx",n.x)
-				.attr("cy",n.y)
+				.attr("cx",function(n){return n.x})
+				.attr("cy",function(n){return n.y})
 				.attr("r",5)
-				.attr("id",n.id)
-				.style("fill",nodeColor(n.var))
-				.style("stroke",nodeColor(n.var));
-		});
+				.attr("id",function(n){return n.id})
+				.style("fill",function(n){return nodeColor(n.var)})
+				.style("stroke",function(n){return nodeColor(n.var)});
+		node.transition().duration(animationTime)
+				.attr("cx",function(n){return n.x})
+				.attr("cy",function(n){return n.y})
+				.style("fill",function(n){return nodeColor(n.var)})
+				.style("stroke",function(n){return nodeColor(n.var)});
   	})
 
 tree.transition().duration(animationTime)
