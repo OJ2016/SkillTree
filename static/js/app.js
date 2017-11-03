@@ -169,7 +169,6 @@ var width = parseInt(d3.select("#class-diagram").select("svg").style("width"), 1
 var height = parseInt(d3.select("#class-diagram").select("svg").style("height"), 10);
 	radius = Math.min(width, height) / 6;
 
-console.log(height)
 var animationTime = 300;
 var pie = d3.layout.pie()
 	.startAngle(-Math.PI/2)
@@ -316,81 +315,56 @@ function updateClassesData(id)
 }
 function setFocusTree(treeid)
 {
-	for(var i=0;i<ClassesData.length;i++)
+	if(treeid)
 	{
-		if(ClassesData[i].id != treeid)
+		for(var i=0;i<ClassesData.length;i++)
 		{
-			ClassesData[i].value = 1;
-		}
-		else
-		{
-			if(ClassesData[i].value > 1)
+			if(ClassesData[i].id != treeid)
 			{
 				ClassesData[i].value = 1;
-				focusedID = null;
 			}
 			else
 			{
-				ClassesData[i].value = 100;
-				focusedID = ClassesData[i].id;
+				if(ClassesData[i].value > 1)
+				{
+					ClassesData[i].value = 1;
+					focusedID = null;
+				}
+				else
+				{
+					ClassesData[i].value = 100;
+					focusedID = ClassesData[i].id;
+				}
 			}
 		}
 	}
 	change(ClassesData);
 }
 
-function setFocusSlice(sliceid)
+function SliceidToTreeid(sliceid)
 {
-	var n = -1;
 	if(sliceid)
 	{
-		var n = Number(sliceid.substring(6));
-	}
-	for(var i=0;i<ClassesData.length;i++)
-	{
-		if(i != n)
+		n = Number(sliceid.substring(6));
+		if(n < ClassesData.length)
 		{
-			ClassesData[i].value = 1;
-		}
-		else
-		{
-			if(ClassesData[i].value > 1)
-			{
-				ClassesData[i].value = 1;
-				focusedID = null;
-			}
-			else
-			{
-				ClassesData[i].value = 100;
-				focusedID = ClassesData[i].id;
-			}
+			return ClassesData[n].id;
 		}
 	}
-	change(ClassesData);
 }
-function SelectClass(id)
+
+function ClassNameidToTreeid(sliceid)
 {
-	var n = Number(id.substring(6));
-	for(var i=0;i<ClassesData.length;i++)
-	{
-		if(i != n)
+	if(sliceid)
+	{	
+		n = Number(sliceid.substring(10));
+		if(n < ClassesData.length)
 		{
-			ClassesData[i].value = 1;
-		}
-		else
-		{
-			if(ClassesData[i].value > 1)
-			{
-				ClassesData[i].value = 1;
-			}
-			else
-			{
-				ClassesData[i].value = 100;
-			}
+			return ClassesData[n].id;
 		}
 	}
-	change(ClassesData);
 }
+
 function nodeColor(nodevar)
 {
 	if(nodevar == 0)
@@ -578,6 +552,7 @@ var classnames = svg.selectAll(".className")
 var classnamesenter = classnames.enter()
 					.append("text")
 					.attr("class", "className")
+					.attr("id", function(d,i){return "classname_"+i;})
 					.attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.8;})  
 					.attr("dy", radius*0.15)
 					.append("textPath")
@@ -586,9 +561,13 @@ var classnamesenter = classnames.enter()
 					.text(function(d){return d.data.name;});
 classnames.transition().duration(animationTime).attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.7;})  
 classnames.exit().remove();
+d3.selectAll(".className")
+	.on("click", function(){
+			setFocusTree(ClassNameidToTreeid(d3.select(this).attr("id")));
+		})
 d3.selectAll(".slice")
 	.on("click", function(){
-		setFocusSlice(d3.select(this).attr("id"));
+		setFocusTree(SliceidToTreeid(d3.select(this).attr("id")));
 	})
 d3.selectAll(".node")
 	.on("click", function(){
