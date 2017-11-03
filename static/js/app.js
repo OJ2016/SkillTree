@@ -7,6 +7,8 @@ $(document).ready(function() {
 		.attr("height", "100%")
         .append("g")
 
+var defs = svg.append("svg:defs");
+
 
 svg.append("g")
 	.attr("class", "slices");
@@ -18,26 +20,31 @@ ClassesData = [{
 		"var": 0,
 		"color":"#98abc5",
 		"value":1,
+		"url":"/resources/images/icon.jpg",
 		"children": [
 			{
 			"name": "name",
 			"id":"0.0",
 			"var": 0,
+			"url":"/resources/images/icon.jpg",
 			"children": [
 				{
 				"name": "name",
 				"id":"0.0.0",
 				"var": 0,
+				"url":"/resources/images/icon.jpg",
 				"children": [
 					{
 					"name": "name",
 					"id":"0.0.0.0",
-					"var": 0
+					"var": 0,
+					"url":"/resources/images/icon.jpg"
 					},
 					{
 					"name": "nf2",
 					"id":"0.0.0.1",
-					"var": 0
+					"var": 0,
+					"url":"/resources/images/icon.jpg"
 					}
 				]
 				},
@@ -45,15 +52,18 @@ ClassesData = [{
 				"name": "name",
 				"id":"0.0.1",
 				"var": 0,
+				"url":"/resources/images/icon.jpg",
 				"children": [
 					{
 					"name": "name",
 					"id":"0.0.1.0",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					},
 					{
 					"name": "name",
 					"id":"0.0.1.1",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					}
 				]
@@ -66,26 +76,31 @@ ClassesData = [{
 		"id":"1",
 		"var": 0,
 		"color":"#aaaaaa",
+		"url":"/resources/images/star.jpg",
 		"value":1,
 		"children": [
 			{
 			"name": "name",
 			"id":"1.0",
+			"url":"/resources/images/star.jpg",
 			"var": 0,
 			"children": [
 				{
 				"name": "name",
 				"id":"1.0.0",
 				"var": 0,
+				"url":"/resources/images/star.jpg",
 				"children": [
 					{
 					"name": "name",
 					"id":"1.0.0.0",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					},
 					{
 					"name": "namhhhe",
 					"id":"1.0.0.1",
+					"url":"/resources/images/icon.jpg",
 					"var": 0
 					}
 				]
@@ -93,16 +108,19 @@ ClassesData = [{
 				{
 				"name": "name",
 				"id":"1.0.1",
+				"url":"/resources/images/icon.jpg",
 				"var": 0,
 				"children": [
 					{
 					"name": "name",
 					"id":"1.0.1.0",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					},
 					{
 					"name": "name",
 					"id":"1.0.1.1",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					}
 				]
@@ -115,27 +133,32 @@ ClassesData = [{
 	    "name": "ClassName3",
 		"id":"2",
 		"var": 0,
+		"url":"/resources/images/star.jpg",
 		"color":"#aaaaff",
 		"value":1,
 		"children": [
 			{
 			"name": "name",
 			"id":"2.0",
+			"url":"/resources/images/star.jpg",
 			"var": 0,
 			"children": [
 				{
 				"name": "name",
 				"id":"2.0.0",
 				"var": 0,
+				"url":"/resources/images/star.jpg",
 				"children": [
 					{
 					"name": "name",
 					"id":"2.0.0.0",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					},
 					{
 					"name": "namhhhe",
 					"id":"2.0.0.1",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					}
 				]
@@ -144,15 +167,18 @@ ClassesData = [{
 				"name": "name",
 				"id":"2.0.1",
 				"var": 0,
+				"url":"/resources/images/star.jpg",
 				"children": [
 					{
 					"name": "name",
 					"id":"2.0.1.0",
+					"url":"/resources/images/star.jpg",
 					"var": 0
 					},
 					{
 					"name": "name",
 					"id":"2.0.1.1",
+					"url":"/resources/images/icon.jpg",
 					"var": 0
 					}
 				]
@@ -409,6 +435,7 @@ function removeAll()
 	svg.selectAll(".className").remove();
 }
 function change(data) {
+	
 /* ------- PIE SLICES -------*/
 var slice = svg.select(".slices").selectAll("path.slice")
 	.data(pie(data),key);
@@ -463,6 +490,12 @@ tree.each(function(d,i){
 		{
 			sector = Math.PI;
 		}
+		var hidden = false;
+		if(focusedID)
+		{
+			hidden = d.data.id!=focusedID;
+		}
+		
 		var skilltree = d3.layout.tree()
 			.size([sector, 250]);
  		var nodes = skilltree.nodes(d.data).reverse();
@@ -472,11 +505,40 @@ tree.each(function(d,i){
 			n.x = Math.cos(angle)*radius;
 			n.y = Math.sin(angle)*radius;
 			});
+		var imgradius = 15;
+		var ang = -midAngle(d)+Math.PI;
+		
+		var icons = defs.selectAll(".pattern")
+		.data(nodes,function(n){return n.id})
+		
+		if(!hidden)
+		{
+		icons.selectAll("image")
+		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")");
+		
+		icons.enter().append("pattern")
+		.attr("id", function(d) { return d.id; })
+		.attr("width", imgradius*2)
+		.attr("height", imgradius*2)
+		.attr("class", "pattern")
+		.append("image")
+		.attr("xlink:href", function(d) { return d.url; })
+		.attr("width", imgradius*2)
+		.attr("height", imgradius*2)
+		.attr("x",-imgradius)
+		.attr("y",-imgradius)
+		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")");
+		}
+		else{
+			icons.remove();
+		}
+		
 		
 		var links = skilltree.links(nodes);
 		
 		var link = d3.select("#tree_"+i).selectAll(".link").data(links);
-		
+		if(!hidden)
+		{
 		link.transition().duration(animationTime)
 			.attr("x1",function(l){ return l.target.x})
 			.attr("y1",function(l){ return l.target.y})
@@ -494,31 +556,61 @@ tree.each(function(d,i){
 			.style("opacity",0)
 			.transition().duration(animationTime)
 			.style("opacity",1);;
-		
+		}
+		else{
+			link.remove();
+		}
 			
 		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
-		
+		if(!hidden)
+		{
 		node.transition().duration(animationTime)
 				.attr("cx",function(n){return n.x})
 				.attr("cy",function(n){return n.y})
-				.style("fill",function(n){return nodeColor(n.var)})
-				.style("stroke",function(n){return nodeColor(n.var)});
+				.style("opacity",function(n){
+					if(n.var == 0)
+					{
+						return 0.1;
+					}
+					else if(n.var == 1)
+					{
+						return 0.5;
+					}
+					else{
+						return 1;
+					}
+				})
 		
 		var nodeenter = node.enter()
 				.append("circle")
 				.attr("class", "node")
 				.attr("cx",function(n){return n.x})
 				.attr("cy",function(n){return n.y})
-				.attr("r",5)
+				.attr("r",imgradius)
 				.attr("id",function(n){return n.id})
-				.style("fill",function(n){return nodeColor(n.var)})
-				.style("stroke",function(n){return nodeColor(n.var)})
+				.style("fill",function(n) { return "url(#"+n.id+")"; })
 				.style("opacity",0)
 				.transition().duration(animationTime*2)
-				.style("opacity",1);
-				
+				.style("opacity",function(n){
+					if(n.var == 0)
+					{
+						return 0.1;
+					}
+					else if(n.var == 1)
+					{
+						return 0.5;
+					}
+					else{
+						return 1;
+					}
+				});
+		}
+		else{
+			node.remove();
+		}		
 		var text = d3.select("#tree_"+i).selectAll("text").data(links);
-		
+		if(!hidden)
+		{
 		text.transition().duration(animationTime)
 		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
 		
@@ -530,9 +622,10 @@ tree.each(function(d,i){
 			.style("opacity",0)
 			.transition().duration(animationTime*2)
 			.style("opacity",1);
-		
-				
-		
+		}
+		else{
+			text.remove();
+		}
   	})
 
 tree.transition().duration(animationTime)
@@ -559,7 +652,22 @@ var classnamesenter = classnames.enter()
 					.style("text-anchor","middle")
 					.attr("xlink:href",function(d,i){return "#class_"+i;})
 					.text(function(d){return d.data.name;});
-classnames.transition().duration(animationTime).attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.7;})  
+classnames.transition().duration(animationTime).attr("dx", function(d){return (Math.abs(d.endAngle-d.startAngle)/(Math.PI*2))*Math.PI*radius*0.7;})
+.style("opacity",function(d){
+	if(focusedID){
+		if(focusedID == d.data.id)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else{
+		return 1;
+	}
+});
 classnames.exit().remove();
 d3.selectAll(".className")
 	.on("click", function(){
@@ -573,12 +681,13 @@ d3.selectAll(".node")
 	.on("click", function(){
 		updateClassesData(d3.select(this).attr("id"));
 	})
-	.on("mouseover", function(){
-		d3.select(this).style("stroke", "red");
-	})
 	.on("mouseout", function(){
-		d3.select(this).style("stroke", nodeColor(d3.select(this).attr("var")));
+		d3.select(this).style("stroke", "none");
+	})
+	.on("mouseover", function(){
+		d3.select(this).style("stroke", "blue");
 	});
+	
 }
 
 
