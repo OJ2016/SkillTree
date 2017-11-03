@@ -298,7 +298,7 @@ function findDatabyID(id,list)
 	return null;
 }
 
-function updateClassesData(id,list)
+function updateClassesData(id)
 {
 	d = findDatabyID(id,ClassesData)
 	if(d.var == 1)
@@ -588,11 +588,11 @@ classnames.transition().duration(animationTime).attr("dx", function(d){return (M
 classnames.exit().remove();
 d3.selectAll(".slice")
 	.on("click", function(){
-		SelectClass(d3.select(this).attr("id"));
+		setFocusSlice(d3.select(this).attr("id"));
 	})
 d3.selectAll(".node")
 	.on("click", function(){
-		setFocusSlice(d3.select(this).attr("id"));
+		updateClassesData(d3.select(this).attr("id"));
 	})
 	.on("mouseover", function(){
 		d3.select(this).style("stroke", "red");
