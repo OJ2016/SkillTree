@@ -11,4 +11,4 @@ var classesSchema = new Schema({
 	content: String
 });
 
-mongoose.model('classes', classesSchema);
+module.exports = mongoose.model('classes', classesSchema);

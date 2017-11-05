@@ -27,6 +27,15 @@
                     </div>
                 </div>
             </form>
+            <% if (content.user) { %>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="/logout">Logout: <%=content.user.google.name%></a></li>
+                </ul>
+            <% } else { %>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="/login">Login</a></li>
+                </ul>
+            <% } %>
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="/">Home</a></li>
             </ul>
