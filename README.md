@@ -94,6 +94,7 @@ This information is applied to the set of skilltrees explained above before it i
 
 
 #Interface manual
+
 DATABASE MODELS
 	User
 		google           : {
@@ -114,6 +115,7 @@ DATABASE MODELS
 
 
 URL
+
 	get '/'
 		If not logged in -> redirect to '/browse'
 
