@@ -195,7 +195,7 @@ var width = parseInt(d3.select("#class-diagram").select("svg").style("width"), 1
 var height = parseInt(d3.select("#class-diagram").select("svg").style("height"), 10);
 	radius = Math.min(width, height) / 6;
 
-var animationTime = 300;
+var animationTime = 1000;
 var pie = d3.layout.pie()
 	.startAngle(-Math.PI/2)
 	.endAngle(3*Math.PI/2)
@@ -514,7 +514,8 @@ tree.each(function(d,i){
 		if(!hidden)
 		{
 		icons.selectAll("image")
-		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")");
+		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")")
+		.style("visibility","visible");
 		
 		icons.enter().append("pattern")
 		.attr("id", function(d) { return d.id; })
@@ -530,7 +531,7 @@ tree.each(function(d,i){
 		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")");
 		}
 		else{
-			icons.remove();
+			icons.selectAll("image").style("visibility","hidden");
 		}
 		
 		
@@ -539,13 +540,13 @@ tree.each(function(d,i){
 		var link = d3.select("#tree_"+i).selectAll(".link").data(links);
 		if(!hidden)
 		{
-		link.transition().duration(animationTime)
+		link.style("visibility","visible").transition().duration(animationTime)
 			.attr("x1",function(l){ return l.target.x})
 			.attr("y1",function(l){ return l.target.y})
 			.attr("x2",function(l){ return l.source.x})
 			.attr("y2",function(l){ return l.source.y})
-			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)});
-		
+			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
+			
 		var linksenter = link.enter().insert("svg:line")
 			.attr("class", "link")
 			.attr("x1",function(l){ return l.target.x})
@@ -555,16 +556,16 @@ tree.each(function(d,i){
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
 			.style("opacity",0)
 			.transition().duration(animationTime)
-			.style("opacity",1);;
+			.style("opacity",1);
 		}
 		else{
-			link.remove();
+			link.style("visibility","hidden");
 		}
 			
 		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
 		if(!hidden)
 		{
-		node.transition().duration(animationTime)
+		node.style("visibility","visible").transition().duration(animationTime)
 				.attr("cx",function(n){return n.x})
 				.attr("cy",function(n){return n.y})
 				.style("opacity",function(n){
@@ -606,13 +607,13 @@ tree.each(function(d,i){
 				});
 		}
 		else{
-			node.remove();
+			node.style("visibility","hidden");
 		}		
 		var text = d3.select("#tree_"+i).selectAll("text").data(links);
 		if(!hidden)
 		{
-		text.transition().duration(animationTime)
-		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
+		text.style("visibility","visible").transition().duration(animationTime)
+		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)});
 		
 		var textenter = text.enter()
 			.insert("text")
@@ -624,7 +625,7 @@ tree.each(function(d,i){
 			.style("opacity",1);
 		}
 		else{
-			text.remove();
+			text.style("visibility","hidden");
 		}
   	})
 
