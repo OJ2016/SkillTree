@@ -5,6 +5,7 @@ var fs = require('fs');
 var passport = require('passport');
 var mongoose = require('mongoose');
 var session = require('express-session');
+var bodyParser = require('body-parser')
 
 
 // Connect Databse
@@ -19,6 +20,8 @@ app.set("views", path.join(__dirname, "views"))
 app.set("view engine", "ejs");
 
 // use midleware
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, "static")))
 
 // required for passport

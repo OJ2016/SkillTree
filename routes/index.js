@@ -12,19 +12,41 @@ module.exports = function(app, passport) {
 		}
 		else {
 		   	// User logged in, serve user page
-		   	// Get user information from DB
+		   	// get saved states from user and extract all classes needed
+			var state = req.user.saved_state;
+		   	var class_ids = findUserTrees(state);
+
+		   	// content container
 		   	var content = {
 				user : req.user,
-				// pass data to clientside js to draw things
-				// also knows if it whould draw avatar or class page
 				client: {
-					avatar_page: true,
-					data: "Here we can submit all data that the clientside js needs to know"
+					saved_state: state,
+					data: []
 				}
 			};
-			res.render("canvas_page", {
-				content
-		   	});
+
+		   	// find all classes user has selected and render site
+		   	mongoose.model('classes').find({id: { $in: class_ids}}, function(err, classes){
+				if (err) {
+					// handle error
+					console.log(err);
+				}
+				if (classes) {
+					// found something
+					classes.forEach(function(c){
+						content.client.data.push(c);
+					});
+					res.render("canvas_page", {
+						content
+			   		});
+				}
+				else {
+					// no items found
+					res.render("canvas_page", {
+						content
+			   		});
+				}
+				});
 		};
 	});
 
@@ -65,9 +87,7 @@ module.exports = function(app, passport) {
 
 		var content = {
 			user : req.user,
-			client: {
-				avatar_page: true
-			}
+			client: {}
 		};
 		// Get class information from DB
 		mongoose.model('classes').findOne({id: req.params.class_id}, function(err, classes){
@@ -117,6 +137,30 @@ module.exports = function(app, passport) {
 	        failureRedirect : '/'
 	}));
 
+	// post listener to AJAX save request
+	// format of ajax call below
+	//$.ajax({
+    //    type: 'POST',
+    //    url: '/save',
+    //    dataType: 'json',
+    //    data: {'state': "['1','1.0','2','2.0','2.1']"},
+	//});
+
+	app.post('/save', function(req,res) {
+		var state = req.body.state;
+		console.log(state);
+		if (req.isAuthenticated()) {
+			var query = {"google.email" : req.user.google.email};
+			mongoose.model('User').findOneAndUpdate(query, {"saved_state" : state}, function(err, doc){
+				if (err) {
+					// handle error
+					console.log(err);
+				}
+			});
+		} else {
+			// error
+		}
+	});
 
 
 	function isLoggedIn(req, res, next) {
@@ -127,7 +171,20 @@ module.exports = function(app, passport) {
 
 	    // if they aren't redirect them to the home page
 	    res.redirect('/');
+	};
+
+	function findUserTrees(saved_state) {
+		saved_state = saved_state.replace(/['[\]\\]/g, "");
+		saved_state = saved_state.split(",");
+		var id_array = [];
+		for (i=0;i<saved_state.length;i++) {
+			if (saved_state[i].indexOf(".") == -1) {
+				id_array.push(Number(saved_state[i]));
+			}
+		}
+		return id_array;
 	}
 
-
 };
+
+
