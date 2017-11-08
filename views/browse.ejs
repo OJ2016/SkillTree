@@ -42,16 +42,23 @@
         </div>
     </nav>
     <div class="container">
-        <div class="well well-sm">
-            <strong>Display</strong>
-            <div class="btn-group">
-                <a href="#" id="list" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list">
-            </span>List</a> <a href="#" id="grid" class="btn btn-default btn-sm"><span
-                class="glyphicon glyphicon-th"></span>Grid</a>
+      
+        <% if (content.data) { %>
+            <div class="well well-sm">
+                <strong>Display</strong>
+                <div class="btn-group">
+                    <a href="#" id="list" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list"> </span>List</a> <a href="#" id="grid" class="btn btn-default btn-sm"><span ="glyphicon glyphicon-th"></span>Grid</a>
+                </div>
             </div>
-        </div>
-        <div id="skills" class="row list-group">
-        </div>
+            <div id="skills" class="row list-group">
+                <% for(var i=0; i < content.data.length; i++) { %>
+                    <div class="item  col-xs-4 col-lg-4"> <div class="tuhmbnail"><a href="/"><img class="group list-group-image" src=" <%= content.data[i].icon %> " alt="" /></a><div class="caption"><h4 class="group inner list-group-item-heading"><%= content.data[i].name %> </h4><p class="group inner list-group-item-text"> <%= content.data[i].description %> </p><div class="row"></div></div></div></div>
+                <% } %>
+            </div>
+        <% } else { %>
+
+        <% } %>
+        
     </div>
 </body>
 
