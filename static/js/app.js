@@ -14,7 +14,7 @@ svg.append("g")
 	.attr("class", "slices");
 svg.append("g")
 	.attr("class", "trees");
-ClassesData=[{"name":"Presenter","id":"0","var":0,"color":"#98abc5","value":1,"url":"/resources/images/presentations/0.png","children":[{"name":"1stPresentation","id":"0.0","var":0,"url":"/resources/images/presentations/00.png","children":[{"name":"Bilingual","id":"0.0.0","var":0,"url":"/resources/images/presentations/000.png",},{"name":"Group","id":"0.0.1","var":0,"url":"/resources/images/presentations/001.png","children":[{"name":"Crowd","id":"0.0.1.0","url":"/resources/images/presentations/0010.png","var":0}]}]},{"name":"1stSlides","id":"0.1","var":0,"url":"/resources/images/presentations/01.png","children":[{"name":"PowerPoint","id":"0.1.0","var":0,"url":"/resources/images/presentations/010.jpg","children":[{"name":"Keynote","id":"0.1.0.0","url":"/resources/images/presentations/0100.png","var":0}]},{"name":"Animations","id":"0.1.1","var":0,"url":"/resources/images/presentations/011.png","children":[{"name":"Videos","id":"0.1.1.0","url":"/resources/images/presentations/0110.png","var":0,"children":[{"name":"DemoPlay","id":"0.1.1.0.0","url":"/resources/images/presentations/01100.png","var":0}]}]}]}]},{"name":"C++Programer","id":"1","var":0,"color":"#aaaaaa","url":"/resources/images/c_plus_plus/1.png","value":1,"children":[{"name":"HelloWorld","id":"1.0","url":"/resources/images/c_plus_plus/10.png","var":0,"children":[{"name":"Application","id":"1.0.0","var":0,"url":"/resources/images/c_plus_plus/100.png","children":[{"name":"500loc","id":"1.0.0.0","url":"/resources/images/c_plus_plus/1000.png","var":0,"children":[{"name":"5000loc","id":"1.0.0.0.0","url":"/resources/images/c_plus_plus/10000.png","var":0,"children":[{"name":"50000loc","id":"1.0.0.0.0.0","url":"/resources/images/c_plus_plus/100000.png","var":0}]}]},{"name":"Debugging","id":"1.0.0.1","url":"/resources/images/c_plus_plus/1001.png","var":0,"children":[{"name":"UnitTesting","id":"1.0.0.1.0","url":"/resources/images/c_plus_plus/10010.png","var":0}]}]},{"name":"SyntaxTutorial","id":"1.0.1","url":"/resources/images/c_plus_plus/101.png","var":0,"children":[{"name":"Constructor","id":"1.0.1.0","url":"/resources/images/c_plus_plus/1010.png","var":0,"children":[{"name":"Pointer","id":"1.0.1.0.0","url":"/resources/images/c_plus_plus/10100.png","var":0,"children":[{"name":"TemplateProgramming","id":"1.0.1.0.0.0","url":"/resources/images/c_plus_plus/101000.png","var":0}]}]}]}]}]}];
+ClassesData=[{"name":"Presenter","id":"0","var":0,"color":"#98abc5","value":1,"url":"/resources/images/presentations/0.png","children":[{"name":"1st Presentation","id":"0.0","var":0,"url":"/resources/images/presentations/00.png","children":[{"name":"Bilingual","id":"0.0.0","var":0,"url":"/resources/images/presentations/000.png",},{"name":"Group","id":"0.0.1","var":0,"url":"/resources/images/presentations/001.png","children":[{"name":"Crowd","id":"0.0.1.0","url":"/resources/images/presentations/0010.png","var":0}]}]},{"name":"1stSlides","id":"0.1","var":0,"url":"/resources/images/presentations/01.png","children":[{"name":"PowerPoint","id":"0.1.0","var":0,"url":"/resources/images/presentations/010.jpg","children":[{"name":"Keynote","id":"0.1.0.0","url":"/resources/images/presentations/0100.png","var":0}]},{"name":"Animations","id":"0.1.1","var":0,"url":"/resources/images/presentations/011.png","children":[{"name":"Videos","id":"0.1.1.0","url":"/resources/images/presentations/0110.png","var":0,"children":[{"name":"DemoPlay","id":"0.1.1.0.0","url":"/resources/images/presentations/01100.png","var":0}]}]}]}]},{"name":"C++Programer","id":"1","var":0,"color":"#aaaaaa","url":"/resources/images/c_plus_plus/1.png","value":1,"children":[{"name":"HelloWorld","id":"1.0","url":"/resources/images/c_plus_plus/10.png","var":0,"children":[{"name":"Application","id":"1.0.0","var":0,"url":"/resources/images/c_plus_plus/100.png","children":[{"name":"500loc","id":"1.0.0.0","url":"/resources/images/c_plus_plus/1000.png","var":0,"children":[{"name":"5000loc","id":"1.0.0.0.0","url":"/resources/images/c_plus_plus/10000.png","var":0,"children":[{"name":"50000loc","id":"1.0.0.0.0.0","url":"/resources/images/c_plus_plus/100000.png","var":0}]}]},{"name":"Debugging","id":"1.0.0.1","url":"/resources/images/c_plus_plus/1001.png","var":0,"children":[{"name":"UnitTesting","id":"1.0.0.1.0","url":"/resources/images/c_plus_plus/10010.png","var":0}]}]},{"name":"SyntaxTutorial","id":"1.0.1","url":"/resources/images/c_plus_plus/101.png","var":0,"children":[{"name":"Constructor","id":"1.0.1.0","url":"/resources/images/c_plus_plus/1010.png","var":0,"children":[{"name":"Pointer","id":"1.0.1.0.0","url":"/resources/images/c_plus_plus/10100.png","var":0,"children":[{"name":"TemplateProgramming","id":"1.0.1.0.0.0","url":"/resources/images/c_plus_plus/101000.png","var":0}]}]}]}]}]}];
 var userData = ["0","0.0","0.0.0","1","2"];
 var focusedID = null;
 
@@ -321,6 +321,31 @@ var treeEnter = tree.enter()
 	.attr("class", "tree")
 	.attr("id", function(d,i){return "tree_"+i;})
 	.each(function(d){this.angle = 3*Math.PI/2});
+
+function DFSnode(node,sector,r){
+	node.y = r;
+	if(node.children)
+	{
+		for(var i =0;i< node.children.length;i++)
+		{
+			var ch = node.children[i];
+			var L = ch.name.length*11+10;
+			var a = node.x;
+			var b = ch.x;
+			console.log(a*180/Math.PI,b*180/Math.PI);				
+			//fancy maths
+			
+			var r2 = 0.5*(2*r*Math.cos(a-b)+Math.sqrt(2)*Math.sqrt(r*r*Math.cos(2*a-2*b)+2*L*L-r*r) );
+			
+			if(isNaN(r2))
+			{
+				r2 = r+L;
+			}
+			
+			DFSnode(ch,sector,r2); 
+		}
+	}
+}
 	
 tree.each(function(d,i){
 		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
@@ -335,47 +360,38 @@ tree.each(function(d,i){
 		}
 		
 		var skilltree = d3.layout.tree()
-			.size([sector, 250]);
- 		var nodes = skilltree.nodes(d.data).reverse();
-		nodes.forEach(function(n) {	
-			var angle = (n.x-sector/2)+Math.PI/2;
-			var radius = n.y;
-			n.x = Math.cos(angle)*radius;
-			n.y = Math.sin(angle)*radius;
-			});
-		var imgradius = 15;
+				.size([sector, 400]);
+ 		
 		var ang = -midAngle(d)+Math.PI;
+		
+		var a0 = midAngle(d)-Math.PI;
+		var x0 = Math.cos(a0+Math.PI/2)*radius*0.8;
+		var y0 = Math.sin(a0+Math.PI/2)*radius*0.8;
+		
+		var nodes = skilltree.nodes(d.data);
+		
+		DFSnode(nodes[0],sector,0.1);
+		nodes.forEach(function(n) {	
+			var angle = a0 + (n.x-sector/2)+Math.PI/2;
+			var rad = n.y;
+			n.x = x0 + Math.cos(angle)*rad;
+			n.y = y0 + Math.sin(angle)*rad;
+			});
+		
+		
+		var imgradius = 15;
+		
 		
 		var icons = defs.selectAll(".pattern")
 		.data(nodes,function(n){return n.id})
 		
-		if(!hidden)
-		{
-		icons.selectAll("image")
-		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")")
-		.style("visibility","visible");
 		
-		icons.enter().append("pattern")
-		.attr("id", function(d) { return d.id; })
-		.attr("width", imgradius*2)
-		.attr("height", imgradius*2)
-		.attr("class", "pattern")
-		.append("image")
-		.attr("xlink:href", function(d) { return d.url; })
-		.attr("width", imgradius*2)
-		.attr("height", imgradius*2)
-		.attr("x",-imgradius)
-		.attr("y",-imgradius)
-		.attr("transform","translate("+imgradius+" "+imgradius+") rotate("+ang*180/Math.PI+")");
-		}
-		else{
-			icons.selectAll("image").style("visibility","hidden");
-		}
 		
 		
 		var links = skilltree.links(nodes);
 		
 		var link = d3.select("#tree_"+i).selectAll(".link").data(links);
+		
 		if(!hidden)
 		{
 		link.style("visibility","visible").transition().duration(animationTime)
@@ -384,6 +400,7 @@ tree.each(function(d,i){
 			.attr("x2",function(l){ return l.source.x})
 			.attr("y2",function(l){ return l.source.y})
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
+			.style("opacity",1);
 			
 		var linksenter = link.enter().insert("svg:line")
 			.attr("class", "link")
@@ -397,9 +414,26 @@ tree.each(function(d,i){
 			.style("opacity",1);
 		}
 		else{
-			link.style("visibility","hidden");
+			link.style("visibility","hidden")
+			.style("opacity",0);
 		}
-			
+		
+		
+	
+		icons.enter().append("pattern")
+		.attr("id", function(d) { return d.id; })
+		.attr("width", imgradius*2)
+		.attr("height", imgradius*2)
+		.attr("class", "pattern")
+		.append("image")
+		.attr("xlink:href", function(d) { return d.url; })
+		.attr("width", imgradius*2)
+		.attr("height", imgradius*2)
+		.attr("x",-imgradius)
+		.attr("y",-imgradius)
+		.attr("transform","translate("+imgradius+" "+imgradius+")");
+		
+		
 		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
 		if(!hidden)
 		{
@@ -409,11 +443,11 @@ tree.each(function(d,i){
 				.style("opacity",function(n){
 					if(n.var == 0)
 					{
-						return 0.1;
+						return 0.4;
 					}
 					else if(n.var == 1)
 					{
-						return 0.5;
+						return 0.6;
 					}
 					else{
 						return 1;
@@ -445,14 +479,15 @@ tree.each(function(d,i){
 				});
 		}
 		else{
-			node.style("visibility","hidden");
+			node.style("visibility","hidden")
+			.style("opacity",0);
 		}		
 		var text = d3.select("#tree_"+i).selectAll("text").data(links);
 		if(!hidden)
 		{
 		text.style("visibility","visible").transition().duration(animationTime)
-		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)});
-		
+		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
+		.style("opacity",1);
 		var textenter = text.enter()
 			.insert("text")
 			.style("text-anchor","middle")
@@ -463,11 +498,12 @@ tree.each(function(d,i){
 			.style("opacity",1);
 		}
 		else{
-			text.style("visibility","hidden");
+			text.style("visibility","hidden")
+			.style("opacity",0);
 		}
   	})
 
-tree.transition().duration(animationTime)
+/* tree.transition().duration(animationTime)
 	.attrTween("transform", function(d) {
 		var interpolateangle = d3.interpolate(this.angle, midAngle(d));
 		this.angle = midAngle(d);
@@ -475,7 +511,7 @@ tree.transition().duration(animationTime)
 			var ang = interpolateangle(t);
 			return "translate( " + Math.cos(ang-Math.PI/2)*radius*0.8 + " " + Math.sin(ang-Math.PI/2)*radius*0.8+" ) rotate("+(((ang*180)/Math.PI) - 180)+")";
 		};
-	})
+	}) */
 tree.exit()
 	.remove();
 
