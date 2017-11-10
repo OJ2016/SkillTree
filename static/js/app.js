@@ -63,8 +63,19 @@ d3.select(".append")
 
 d3.select(".remove")
 	.on("click", function(){
-		change(remove());
+		exportToPng();
 });
+function exportToPng()
+{
+	var node = document.getElementById("class-diagram");
+	domtoimage.toPng(node)
+    .then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my-image-name.png';
+        link.href = dataUrl;
+        link.click();
+    });
+}
 function idMatch(id1,id2)
 {
 	//returns 0 if no match
