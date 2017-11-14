@@ -43,6 +43,8 @@ var lockedColor = "#838c89";
 var availableColor = "#177177";
 var chosenColor = "#3f97b5";
 
+
+
 svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 applyUserData(userData);
@@ -163,18 +165,56 @@ function findDatabyID(id,list)
 
 function updateClassesData(id)
 {
-	d = findDatabyID(id,ClassesData)
-	if(d.var == 1)
+	if(focusedID)
 	{
-		d.var = 2;
-		if(d.children)
+		d = findDatabyID(id,ClassesData)
+		if(d.var == 1)
 		{
-			for(var i=0;i<d.children.length;i++)
+			d.var = 2;
+			d3.select("circle[id='"+id+"']").style("fill",function(n) {return "url(#img"+id+")";})
+			if(d.children)
 			{
-			   d.children[i].var = 1;
+				for(var i=0;i<d.children.length;i++)
+				{
+				   d.children[i].var = 1;
+				   d3.select("circle[id='"+d.children[i].id+"']").style("fill","lightgrey");
+				}
 			}
+			change(ClassesData);
+			
+			var udata = getUserData();
+			console.log(udata);
+			//convert to string
+			var str = "[";
+			
+			for(var i=0;i<udata.length;i++)
+			{
+				if(i < udata.length -1)
+				{
+					str = str.concat("'",udata[i],"'",",");
+				}
+				else
+				{
+					str = str.concat("'",udata[i],"'");
+				}
+			}
+			str.concat("]");
+			console.log(str);
+			
+			//you shall not PAASSSSSS!
+			return;
+			
+			console.log("Ajax POST");
+			//save to DB
+			$.ajax({
+				type: 'POST',
+				url: '/save',
+				dataType: 'json',
+				data: {'state': str},
+			});
+				
 		}
-		change(ClassesData);
+		
 	}
 }
 function setFocusTree(treeid)
@@ -228,6 +268,62 @@ function ClassNameidToTreeid(sliceid)
 		}
 	}
 }
+
+function varToOpacity(varvalue)
+{
+	
+	if(focusedID)
+	{
+		if(varvalue == 0)
+		{
+			return 1;
+			//return 0.1;
+		}
+		else if(varvalue == 1)
+		{
+			return 1;
+			//return 0.5;
+		}
+		else{
+			return 1;
+		}
+	}
+	else
+	{
+		if(varvalue > 1)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+		
+	}
+}
+
+function varToVsibility(varvalue)
+{
+	
+	if(focusedID)
+	{
+		return "visible";
+	}
+	else
+	{
+		if(varvalue > 1)
+		{
+			return "visible";
+		}
+		else
+		{
+			return "hidden";
+		}
+		
+	}
+}
+
+
 
 function nodeColor(nodevar)
 {
@@ -287,8 +383,8 @@ var slice = svg.select(".slices").selectAll("path.slice")
 	.attr("id", function(d,i) { return "class_"+i; }) //Give each slice a unique ID
 	.each(function(d){
 	 	this._current = {
-	    	startAngle: 3*Math.PI/2,
-	    	endAngle: 3*Math.PI/2
+	    	startAngle: d.startAngle,
+	    	endAngle: d.endAngle
   	};
 });
 
@@ -319,8 +415,7 @@ var tree = svg.select(".trees").selectAll("g.tree")
 var treeEnter = tree.enter()
 	.insert("g")
 	.attr("class", "tree")
-	.attr("id", function(d,i){return "tree_"+i;})
-	.each(function(d){this.angle = 3*Math.PI/2});
+	.attr("id", function(d,i){return "tree_"+i;});
 
 function DFSnode(node,sector,r){
 	node.y = r;
@@ -331,8 +426,7 @@ function DFSnode(node,sector,r){
 			var ch = node.children[i];
 			var L = ch.name.length*11+10;
 			var a = node.x;
-			var b = ch.x;
-			console.log(a*180/Math.PI,b*180/Math.PI);				
+			var b = ch.x;			
 			//fancy maths
 			
 			var r2 = 0.5*(2*r*Math.cos(a-b)+Math.sqrt(2)*Math.sqrt(r*r*Math.cos(2*a-2*b)+2*L*L-r*r) );
@@ -348,44 +442,45 @@ function DFSnode(node,sector,r){
 }
 	
 tree.each(function(d,i){
-		var sector = Math.abs(d.endAngle-d.startAngle)*1.3;
-		if(sector > Math.PI)
+		var sector = Math.abs(d.endAngle-d.startAngle);
+		var maxsector = Math.PI;
+		if(sector > maxsector)
 		{
-			sector = Math.PI;
+			sector = maxsector;
 		}
 		var hidden = false;
+		var showOnlyChosen = false;
+		
 		if(focusedID)
 		{
 			hidden = d.data.id!=focusedID;
 		}
+		else
+		{
+			showOnlyChosen = true;
+		}
 		
 		var skilltree = d3.layout.tree()
 				.size([sector, 400]);
- 		
-		var ang = -midAngle(d)+Math.PI;
 		
 		var a0 = midAngle(d)-Math.PI;
-		var x0 = Math.cos(a0+Math.PI/2)*radius*0.8;
-		var y0 = Math.sin(a0+Math.PI/2)*radius*0.8;
+		var x0 = Math.cos(a0+Math.PI*0.5)*radius*0.8;
+		var y0 = Math.sin(a0+Math.PI*0.5)*radius*0.8;
 		
 		var nodes = skilltree.nodes(d.data);
 		
 		DFSnode(nodes[0],sector,0.1);
 		nodes.forEach(function(n) {	
-			var angle = a0 + (n.x-sector/2)+Math.PI/2;
+			var angle = a0 + (n.x-sector*0.5)+Math.PI*0.5;
 			var rad = n.y;
 			n.x = x0 + Math.cos(angle)*rad;
 			n.y = y0 + Math.sin(angle)*rad;
 			});
 		
-		
 		var imgradius = 15;
-		
 		
 		var icons = defs.selectAll(".pattern")
 		.data(nodes,function(n){return n.id})
-		
-		
 		
 		
 		var links = skilltree.links(nodes);
@@ -394,13 +489,13 @@ tree.each(function(d,i){
 		
 		if(!hidden)
 		{
-		link.style("visibility","visible").transition().duration(animationTime)
+		link.style("visibility",function(l){return varToVsibility(l.target.var)}).transition().duration(animationTime)
 			.attr("x1",function(l){ return l.target.x})
 			.attr("y1",function(l){ return l.target.y})
 			.attr("x2",function(l){ return l.source.x})
 			.attr("y2",function(l){ return l.source.y})
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
-			.style("opacity",1);
+			
 			
 		var linksenter = link.enter().insert("svg:line")
 			.attr("class", "link")
@@ -409,19 +504,17 @@ tree.each(function(d,i){
 			.attr("x2",function(l){ return l.source.x})
 			.attr("y2",function(l){ return l.source.y})
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
-			.style("opacity",0)
-			.transition().duration(animationTime)
-			.style("opacity",1);
+			.style("visibility",function(l){return varToVsibility(l.target.var)})
+		
 		}
 		else{
 			link.style("visibility","hidden")
-			.style("opacity",0);
 		}
 		
 		
 	
 		icons.enter().append("pattern")
-		.attr("id", function(d) { return d.id; })
+		.attr("id", function(d) { return "img"+d.id; })
 		.attr("width", imgradius*2)
 		.attr("height", imgradius*2)
 		.attr("class", "pattern")
@@ -437,23 +530,10 @@ tree.each(function(d,i){
 		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
 		if(!hidden)
 		{
-		node.style("visibility","visible").transition().duration(animationTime)
+		node.style("visibility",function(n){return varToVsibility(n.var)}).transition().duration(animationTime)
 				.attr("cx",function(n){return n.x})
 				.attr("cy",function(n){return n.y})
-				.style("opacity",function(n){
-					if(n.var == 0)
-					{
-						return 0.4;
-					}
-					else if(n.var == 1)
-					{
-						return 0.6;
-					}
-					else{
-						return 1;
-					}
-				})
-		
+				
 		var nodeenter = node.enter()
 				.append("circle")
 				.attr("class", "node")
@@ -461,57 +541,43 @@ tree.each(function(d,i){
 				.attr("cy",function(n){return n.y})
 				.attr("r",imgradius)
 				.attr("id",function(n){return n.id})
-				.style("fill",function(n) { return "url(#"+n.id+")"; })
-				.style("opacity",0)
-				.transition().duration(animationTime*2)
-				.style("opacity",function(n){
+				.style("fill",function(n) {
 					if(n.var == 0)
 					{
-						return 0.1;
-					}
-					else if(n.var == 1)
+						return "grey";
+					}	
+					if(n.var == 1)
 					{
-						return 0.5;
+						return "lightgrey";
 					}
-					else{
-						return 1;
-					}
-				});
+					return "url(#img"+n.id+")";
+				})
+				.style("visibility",function(n){return varToVsibility(n.var)})
+				
 		}
 		else{
 			node.style("visibility","hidden")
-			.style("opacity",0);
 		}		
 		var text = d3.select("#tree_"+i).selectAll("text").data(links);
 		if(!hidden)
 		{
-		text.style("visibility","visible").transition().duration(animationTime)
+		text.style("visibility",function(l){return varToVsibility(l.target.var)}).transition().duration(animationTime)
 		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
-		.style("opacity",1);
+		
 		var textenter = text.enter()
 			.insert("text")
 			.style("text-anchor","middle")
 			.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
+			.style("visibility",function(l){return varToVsibility(l.target.var)})
 			.text(function(l){return l.target.name})
-			.style("opacity",0)
-			.transition().duration(animationTime*2)
-			.style("opacity",1);
+			
 		}
 		else{
 			text.style("visibility","hidden")
-			.style("opacity",0);
+			//.style("opacity",0);
 		}
   	})
 
-/* tree.transition().duration(animationTime)
-	.attrTween("transform", function(d) {
-		var interpolateangle = d3.interpolate(this.angle, midAngle(d));
-		this.angle = midAngle(d);
-		return function(t) {
-			var ang = interpolateangle(t);
-			return "translate( " + Math.cos(ang-Math.PI/2)*radius*0.8 + " " + Math.sin(ang-Math.PI/2)*radius*0.8+" ) rotate("+(((ang*180)/Math.PI) - 180)+")";
-		};
-	}) */
 tree.exit()
 	.remove();
 
