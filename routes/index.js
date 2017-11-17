@@ -21,6 +21,7 @@ module.exports = function(app, passport) {
 				user : req.user,
 				client: {
 					saved_state: state,
+					class_page: false,
 					data: []
 				}
 			};
@@ -84,31 +85,39 @@ module.exports = function(app, passport) {
 	// one class page
 	app.get("/class/:class_id", function(req,res) {
 		// Class view of a single class
+		if (!req.isAuthenticated()) {
+			res.redirect("/browse");
+		} else {
 
-		var content = {
-			user : req.user,
-			client: {}
+			var content = {
+				user : req.user,
+				client: {
+					saved_state: req.user.saved_state,
+					class_page: true,
+					data: []
+				}
+			};
+			// Get class information from DB
+			mongoose.model('classes').findOne({id: req.params.class_id}, function(err, classes){
+				if (err) {
+					// handle error
+					console.log(err);
+				}
+				if (classes) {
+					// found wanted class
+					content.client.data = classes.content;
+					res.render("canvas_page", {
+						content
+			   		});
+				}
+				else {
+					// no items found
+					res.render("canvas_page", {
+						content
+			   		});
+				}
+			});
 		};
-		// Get class information from DB
-		mongoose.model('classes').findOne({id: req.params.class_id}, function(err, classes){
-			if (err) {
-				// handle error
-				console.log(err);
-			}
-			if (classes) {
-				// found wanted class
-				content.client.data = classes.content;
-				res.render("canvas_page", {
-					content
-		   		});
-			}
-			else {
-				// no items found
-				res.render("canvas_page", {
-					content
-		   		});
-			}
-		});
 		
 	});
 
