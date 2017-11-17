@@ -17,9 +17,6 @@ svg.append("g")
 
 var ClassesData = [];
 
-//Julius take this content and remove the line:
-content.data[1].content = "{'name':'Presenter','id':'0','var':0,'color':'#98abc5','value':1,'url':'/resources/images/presentations/0.png','children':[{'name':'1stPresentation','id':'0.0','var':0,'url':'/resources/images/presentations/00.png','children':[{'name':'Bilingual','id':'0.0.0','var':0,'url':'/resources/images/presentations/000.png'},{'name':'Group','id':'0.0.1','var':0,'url':'/resources/images/presentations/001.png','children':[{'name':'Crowd','id':'0.0.1.0','url':'/resources/images/presentations/0010.png','var':0}]}]},{'name':'1stSlides','id':'0.1','var':0,'url':'/resources/images/presentations/01.png','children':[{'name':'PowerPoint','id':'0.1.0','var':0,'url':'/resources/images/presentations/010.jpg','children':[{'name':'Keynote','id':'0.1.0.0','url':'/resources/images/presentations/0100.png','var':0}]},{'name':'Animations','id':'0.1.1','var':0,'url':'/resources/images/presentations/011.png','children':[{'name':'Videos','id':'0.1.1.0','url':'/resources/images/presentations/0110.png','var':0,'children':[{'name':'DemoPlay','id':'0.1.1.0.0','url':'/resources/images/presentations/01100.png','var':0}]}]}]}]}"
-
 for(var i=0;i<content.data.length;i++)
 {
 	console.log(i);
