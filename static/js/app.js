@@ -14,17 +14,21 @@ svg.append("g")
 	.attr("class", "slices");
 svg.append("g")
 	.attr("class", "trees");
-//ClassesData=[{"name":"Presenter","id":"0","var":0,"color":"#98abc5","value":1,"url":"/resources/images/presentations/0.png","children":[{"name":"1st Presentation","id":"0.0","var":0,"url":"/resources/images/presentations/00.png","children":[{"name":"Bilingual","id":"0.0.0","var":0,"url":"/resources/images/presentations/000.png",},{"name":"Group","id":"0.0.1","var":0,"url":"/resources/images/presentations/001.png","children":[{"name":"Crowd","id":"0.0.1.0","url":"/resources/images/presentations/0010.png","var":0}]}]},{"name":"1stSlides","id":"0.1","var":0,"url":"/resources/images/presentations/01.png","children":[{"name":"PowerPoint","id":"0.1.0","var":0,"url":"/resources/images/presentations/010.jpg","children":[{"name":"Keynote","id":"0.1.0.0","url":"/resources/images/presentations/0100.png","var":0}]},{"name":"Animations","id":"0.1.1","var":0,"url":"/resources/images/presentations/011.png","children":[{"name":"Videos","id":"0.1.1.0","url":"/resources/images/presentations/0110.png","var":0,"children":[{"name":"DemoPlay","id":"0.1.1.0.0","url":"/resources/images/presentations/01100.png","var":0}]}]}]}]},{"name":"C++Programer","id":"1","var":0,"color":"#aaaaaa","url":"/resources/images/c_plus_plus/1.png","value":1,"children":[{"name":"HelloWorld","id":"1.0","url":"/resources/images/c_plus_plus/10.png","var":0,"children":[{"name":"Application","id":"1.0.0","var":0,"url":"/resources/images/c_plus_plus/100.png","children":[{"name":"500loc","id":"1.0.0.0","url":"/resources/images/c_plus_plus/1000.png","var":0,"children":[{"name":"5000loc","id":"1.0.0.0.0","url":"/resources/images/c_plus_plus/10000.png","var":0,"children":[{"name":"50000loc","id":"1.0.0.0.0.0","url":"/resources/images/c_plus_plus/100000.png","var":0}]}]},{"name":"Debugging","id":"1.0.0.1","url":"/resources/images/c_plus_plus/1001.png","var":0,"children":[{"name":"UnitTesting","id":"1.0.0.1.0","url":"/resources/images/c_plus_plus/10010.png","var":0}]}]},{"name":"SyntaxTutorial","id":"1.0.1","url":"/resources/images/c_plus_plus/101.png","var":0,"children":[{"name":"Constructor","id":"1.0.1.0","url":"/resources/images/c_plus_plus/1010.png","var":0,"children":[{"name":"Pointer","id":"1.0.1.0.0","url":"/resources/images/c_plus_plus/10100.png","var":0,"children":[{"name":"TemplateProgramming","id":"1.0.1.0.0.0","url":"/resources/images/c_plus_plus/101000.png","var":0}]}]}]}]}]}];
+
 var ClassesData = [];
+
+//Julius take this content and remove the line:
+content.data[1].content = "{'name':'Presenter','id':'0','var':0,'color':'#98abc5','value':1,'url':'/resources/images/presentations/0.png','children':[{'name':'1stPresentation','id':'0.0','var':0,'url':'/resources/images/presentations/00.png','children':[{'name':'Bilingual','id':'0.0.0','var':0,'url':'/resources/images/presentations/000.png'},{'name':'Group','id':'0.0.1','var':0,'url':'/resources/images/presentations/001.png','children':[{'name':'Crowd','id':'0.0.1.0','url':'/resources/images/presentations/0010.png','var':0}]}]},{'name':'1stSlides','id':'0.1','var':0,'url':'/resources/images/presentations/01.png','children':[{'name':'PowerPoint','id':'0.1.0','var':0,'url':'/resources/images/presentations/010.jpg','children':[{'name':'Keynote','id':'0.1.0.0','url':'/resources/images/presentations/0100.png','var':0}]},{'name':'Animations','id':'0.1.1','var':0,'url':'/resources/images/presentations/011.png','children':[{'name':'Videos','id':'0.1.1.0','url':'/resources/images/presentations/0110.png','var':0,'children':[{'name':'DemoPlay','id':'0.1.1.0.0','url':'/resources/images/presentations/01100.png','var':0}]}]}]}]}"
 
 for(var i=0;i<content.data.length;i++)
 {
-	ClassesData.push(JSON.parse(content.data[0].content.replace(/'/g ,"\"")));
+	console.log(i);
+	ClassesData.push(JSON.parse(content.data[i].content.replace(/'/g ,"\"")));
 }
 
 console.log(ClassesData);
 
-//var userData = ["0","0.0","0.0.0","1","2"];
+
 var savestate = content.saved_state;
 
 var userData = savestate.replace('[','').replace(']','').replace(/'/g ,'').split(',');
@@ -200,6 +204,7 @@ function updateClassesData(id)
 			change(ClassesData);
 			
 			var udata = getUserData();
+	
 			console.log(udata);
 			//convert to string
 			var str = "[";
@@ -217,7 +222,7 @@ function updateClassesData(id)
 			}
 			str = str.concat("]");
 			console.log(str);
-			return;
+			
 			console.log("Ajax POST");
 			//save to DB
 			$.ajax({
@@ -283,39 +288,6 @@ function ClassNameidToTreeid(sliceid)
 	}
 }
 
-function varToOpacity(varvalue)
-{
-	
-	if(focusedID)
-	{
-		if(varvalue == 0)
-		{
-			return 1;
-			//return 0.1;
-		}
-		else if(varvalue == 1)
-		{
-			return 1;
-			//return 0.5;
-		}
-		else{
-			return 1;
-		}
-	}
-	else
-	{
-		if(varvalue > 1)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-		
-	}
-}
-
 function varToVsibility(varvalue)
 {
 	
@@ -336,8 +308,6 @@ function varToVsibility(varvalue)
 		
 	}
 }
-
-
 
 function nodeColor(nodevar)
 {
@@ -369,12 +339,9 @@ function edgeColor(var1,var2)
 var key = function(d){ return d.data.id; };
 function computeTextTransform(sx,sy,tx,ty)
 {
-	var midx = (tx+sx)/2;
-	var midy = (ty+sy)/2;
-	
-	var ang = Math.atan((ty-sy)/(tx-sx))*180/Math.PI;
-	
-	return "translate("+midx+","+midy+") rotate("+ang+")";
+	var midx = tx;
+	var midy = ty+16;
+	return "translate("+midx+","+midy+")";
 }
 function removeAll()
 {
@@ -431,30 +398,7 @@ var treeEnter = tree.enter()
 	.attr("class", "tree")
 	.attr("id", function(d,i){return "tree_"+i;});
 
-function DFSnode(node,sector,r){
-	node.y = r;
-	if(node.children)
-	{
-		for(var i =0;i< node.children.length;i++)
-		{
-			var ch = node.children[i];
-			var L = ch.name.length*11+10;
-			var a = node.x;
-			var b = ch.x;			
-			//fancy maths
-			
-			var r2 = 0.5*(2*r*Math.cos(a-b)+Math.sqrt(2)*Math.sqrt(r*r*Math.cos(2*a-2*b)+2*L*L-r*r) );
-			
-			if(isNaN(r2))
-			{
-				r2 = r+L;
-			}
-			
-			DFSnode(ch,sector,r2); 
-		}
-	}
-}
-	
+
 tree.each(function(d,i){
 		var sector = Math.abs(d.endAngle-d.startAngle);
 		var maxsector = Math.PI;
@@ -483,15 +427,18 @@ tree.each(function(d,i){
 		
 		var nodes = skilltree.nodes(d.data);
 		
-		DFSnode(nodes[0],sector,0.1);
+		//DFSnode(nodes[0],sector,0.1);
 		nodes.forEach(function(n) {	
 			var angle = a0 + (n.x-sector*0.5)+Math.PI*0.5;
 			var rad = n.y;
 			n.x = x0 + Math.cos(angle)*rad;
 			n.y = y0 + Math.sin(angle)*rad;
+			n.angle = angle;
+			n.radius = rad;
+			n.angle0 = a0;
 			});
 		
-		var imgradius = 15;
+		var imgradius = 12;
 		
 		var icons = defs.selectAll(".pattern")
 		.data(nodes,function(n){return n.id})
@@ -504,10 +451,41 @@ tree.each(function(d,i){
 		if(!hidden)
 		{
 		link.style("visibility",function(l){return varToVsibility(l.target.var)}).transition().duration(animationTime)
-			.attr("x1",function(l){ return l.target.x})
-			.attr("y1",function(l){ return l.target.y})
-			.attr("x2",function(l){ return l.source.x})
-			.attr("y2",function(l){ return l.source.y})
+			.attrTween("x1",function(d){
+									var r = d.target.radius;
+									var interpolate = d3.interpolate(this.curangle1,d.target.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.target.angle0);
+									return function(t)
+									{
+										return Math.cos(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.cos(interpolate(t))*r;
+									}})
+			.attrTween("y1",function(d){
+									var r = d.target.radius;
+									var interpolate = d3.interpolate(this.curangle1,d.target.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.target.angle0);
+									this.curangle1 = d.target.angle;
+									return function(t)
+									{
+										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r;
+									}})
+			.attrTween("x2",function(d){
+									var r = d.source.radius;
+									var interpolate = d3.interpolate(this.curangle2,d.source.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.source.angle0);
+									return function(t)
+									{
+										return Math.cos(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.cos(interpolate(t))*r;
+									}})
+			.attrTween("y2",function(d){
+									var r = d.source.radius;
+									var interpolate = d3.interpolate(this.curangle2,d.source.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.source.angle0);
+									this.curangle2 = d.source.angle;
+									this.curangle0 = d.target.angle0;
+									return function(t)
+									{
+										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r;
+									}})
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
 			
 			
@@ -519,10 +497,22 @@ tree.each(function(d,i){
 			.attr("y2",function(l){ return l.source.y})
 			.style("stroke",function(l){ return edgeColor(l.target.var,l.source.var)})
 			.style("visibility",function(l){return varToVsibility(l.target.var)})
+			.each(function(l){
+			
+				this.curangle1 = l.target.angle;
+				this.curangle2 = l.source.angle;
+				this.curangle0 = l.source.angle0;
+			})
 		
 		}
 		else{
 			link.style("visibility","hidden")
+			.each(function(l){
+			
+				this.curangle1 = l.target.angle;
+				this.curangle2 = l.source.angle;
+				this.curangle0 = l.source.angle0;
+			})
 		}
 		
 		
@@ -545,8 +535,27 @@ tree.each(function(d,i){
 		if(!hidden)
 		{
 		node.style("visibility",function(n){return varToVsibility(n.var)}).transition().duration(animationTime)
-				.attr("cx",function(n){return n.x})
-				.attr("cy",function(n){return n.y})
+				.attrTween("cx",function(d){
+									var r = d.radius;
+									var interpolate = d3.interpolate(this.curangle,d.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.angle0);
+									return function(t)
+									{
+										return Math.cos(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.cos(interpolate(t))*r;
+									}})
+				.attrTween("cy",function(d)
+								{
+									var r = d.radius;
+									var interpolate = d3.interpolate(this.curangle,d.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.angle0);
+									this.curangle = d.angle;
+									this.curangle0 = d.angle0;
+									return function(t)
+									{
+										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r;
+									}
+								})
+				
 				
 		var nodeenter = node.enter()
 				.append("circle")
@@ -567,27 +576,60 @@ tree.each(function(d,i){
 					return "url(#img"+n.id+")";
 				})
 				.style("visibility",function(n){return varToVsibility(n.var)})
+				.each(function(n){
+					this.curangle = n.angle;
+					this.curangle0 = n.angle0;
+				})
 				
 		}
 		else{
 			node.style("visibility","hidden")
+			.each(function(n){
+					this.curangle = n.angle;
+					this.curangle0 = n.angle0;
+				})
 		}		
 		var text = d3.select("#tree_"+i).selectAll("text").data(links);
 		if(!hidden)
 		{
 		text.style("visibility",function(l){return varToVsibility(l.target.var)}).transition().duration(animationTime)
-		.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
+		.attrTween("x",function(d){
+									var r = d.target.radius;
+									var interpolate = d3.interpolate(this.curangle1,d.target.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.target.angle0);
+									return function(t)
+									{
+										return Math.cos(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.cos(interpolate(t))*r;
+									}})
+			.attrTween("y",function(d){
+									var r = d.target.radius;
+									var interpolate = d3.interpolate(this.curangle1,d.target.angle);
+									var interpolate0 = d3.interpolate(this.curangle0,d.target.angle0);
+									this.curangle1 = d.target.angle;
+									this.curangle0 = d.target.angle0;
+									return function(t)
+									{
+										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r+20;
+									}})
 		
 		var textenter = text.enter()
 			.insert("text")
 			.style("text-anchor","middle")
-			.attr("transform", function(l){return computeTextTransform(l.source.x,l.source.y,l.target.x,l.target.y)})
+			.attr("x",function(l){ return l.target.x})
+			.attr("y",function(l){ return l.target.y+20})
 			.style("visibility",function(l){return varToVsibility(l.target.var)})
 			.text(function(l){return l.target.name})
-			
+			.each(function(l){
+				this.curangle1 = l.target.angle;
+				this.curangle0 = l.target.angle0;
+			})
 		}
 		else{
 			text.style("visibility","hidden")
+			.each(function(l){
+				this.curangle1 = l.target.angle;
+				this.curangle0 = l.target.angle0;
+			})
 			//.style("opacity",0);
 		}
   	})
