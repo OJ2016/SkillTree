@@ -105,7 +105,7 @@ module.exports = function(app, passport) {
 				}
 				if (classes) {
 					// found wanted class
-					content.client.data = classes.content;
+					content.client.data.push(classes);
 					res.render("canvas_page", {
 						content
 			   		});
