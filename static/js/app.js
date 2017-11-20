@@ -22,20 +22,19 @@ for(var i=0;i<content.data.length;i++)
 	console.log(i);
 	ClassesData.push(JSON.parse(content.data[i].content.replace(/'/g ,"\"")));
 }
+var userData = [];
+if(content.saved_state != "[]")
+{
+	var userData = content.saved_state.replace('[','').replace(']','').replace(/'/g ,'').split(',');
+}
 
-console.log(ClassesData);
-
-
-var savestate = content.saved_state;
-
-var userData = savestate.replace('[','').replace(']','').replace(/'/g ,'').split(',');
-
-
-
-
-
+console.log(userData);
 var focusedID = null;
 
+if(content.class_page)
+{
+	focusedID = ClassesData[0].id;
+}
 var width = parseInt(d3.select("#class-diagram").select("svg").style("width"), 10);
 var height = parseInt(d3.select("#class-diagram").select("svg").style("height"), 10);
 	radius = Math.min(width, height) / 6;
@@ -62,29 +61,73 @@ var availableColor = "#177177";
 var chosenColor = "#3f97b5";
 
 
+if(content.class_page)
+{
+	svg.attr("transform", "translate(" + width / 3 + "," + height / 2 + ")");
+}
+else
+{
+	svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+}
 
-svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+//draw the "action" button
+
+var selected = false;
+for(var i=0;i<userData.length;i++)
+{
+	if(userData[i] == ClassesData[0].id)
+	{
+		selected = true;
+	}
+}
+
+var actionText = content.class_page ? "Select" : "Export";
+var btncolor = content.class_page && selected ? "grey" : "#0b708c";
+svg.append("circle")
+	.attr("class", "actionbutton")
+	.attr("cx",0)
+	.attr("cy",0)
+	.attr("r",radius*0.3)
+	.style("fill",btncolor)
+	.attr("id","actionButton")
+	.style("stroke","white")
+svg.append("text")
+		.style("text-anchor","middle")
+		.attr("class", "actionbutton")
+		.attr("id","actionText")
+		.attr("x",0)
+		.attr("y",0)
+		.style("fill","lightgrey")
+		.style("dominant-baseline","middle")
+		.style("font-size","12px")
+		.text(actionText)
 
 applyUserData(userData);
 
 setFocusTree(focusedID);
 
-d3.select(".randomize")
+if(!selected)
+{
+d3.selectAll(".actionbutton")
 	.on("click", function(){
-		removeAll();
-		ClassesData = ClassesData_orig;
-		change(ClassesData);
-});
-
-d3.select(".append")
-	.on("click", function(){
-		console.log(getUserData());
-});
-
-d3.select(".remove")
-	.on("click", function(){
-		exportToPng();
-});
+		if(content.class_page)
+		{
+			SelectClass();
+		}
+		else
+		{
+			exportToPng();
+		}
+	})
+	.on("mouseout", function(){
+		d3.select("#actionButton").style("stroke", "white");
+		d3.select("#actionText").style("fill","lightgrey");
+	})
+	.on("mouseover", function(){
+		d3.select("#actionButton").style("stroke", "none");
+		d3.select("#actionText").style("fill","white");
+	});
+}
 function exportToPng()
 {
 	var node = document.getElementById("class-diagram");
@@ -95,6 +138,39 @@ function exportToPng()
         link.href = dataUrl;
         link.click();
     });
+}
+function SelectClass()
+{
+	if(content.class_page)
+	{
+		//check if class already selected
+		var newRoot = ClassesData[0].id;
+		for(var i=0;i<userData.length;i++)
+		{
+			if(userData[i] == newRoot)
+			{
+				console.log("already chosen");
+				return;
+			}
+		}
+		userData.push(newRoot);
+		console.log(userData);
+		setClassesData(newRoot);
+		change(ClassesData);
+		savetoDB(userData);
+		
+		d3.selectAll(".actionbutton")
+		.on("click", function(){
+			
+		})
+		.on("mouseout", function(){
+			
+		})
+		.on("mouseover", function(){
+		
+		});
+		d3.select("#actionButton").style("fill","grey");
+	}
 }
 function idMatch(id1,id2)
 {
@@ -123,28 +199,6 @@ function applyUserData(userdata)
 	}
 }
 
-function getUserData()
-{
-	return getUserDataDFS(ClassesData);
-}
-
-function getUserDataDFS(list)
-{
-	var idlist = [];
-	for(var i=0;i<list.length;i++)
-	{
-		if(list[i].var == 2)
-		{
-			idlist.push(list[i].id);
-			if(list[i].children)
-			{
-				idlist = idlist.concat(getUserDataDFS(list[i].children));
-			}
-		}
-	}
-	return idlist;
-}
-
 function setClassesData(id)
 {
 	d = findDatabyID(id,ClassesData);
@@ -159,9 +213,7 @@ function setClassesData(id)
 			}
 		}
 	}
-	else{
-		console.log("invalid id "+id);
-	}
+	
 }
 
 function findDatabyID(id,list)
@@ -186,75 +238,107 @@ function updateClassesData(id)
 	if(focusedID)
 	{
 		d = findDatabyID(id,ClassesData)
+		var updateDB = false;
 		if(d.var == 1)
 		{
+			updateDB = true;
 			d.var = 2;
-			d3.select("circle[id='"+id+"']").style("fill",function(n) {return "url(#img"+id+")";})
+			userData.push(id);
 			if(d.children)
 			{
 				for(var i=0;i<d.children.length;i++)
 				{
 				   d.children[i].var = 1;
-				   d3.select("circle[id='"+d.children[i].id+"']").style("fill","lightgrey");
 				}
 			}
-			change(ClassesData);
-			
-			var udata = getUserData();
-	
-			console.log(udata);
-			//convert to string
-			var str = "[";
-			
-			for(var i=0;i<udata.length;i++)
+		}else if(d.var == 2)
+		{
+			//toggle back to unselected, can do only if no children have var == 2
+			if(d.children)
 			{
-				if(i < udata.length -1)
+				for(var i=0;i<d.children.length;i++)
 				{
-					str = str.concat("'",udata[i],"'",",");
+				   if(d.children[i].var == 2)
+				   {
+					    //cant toggle
+						return;						
+				   }
 				}
-				else
+				for(var i=0;i<d.children.length;i++)
 				{
-					str = str.concat("'",udata[i],"'");
+				   d.children[i].var = 0;
 				}
 			}
-			str = str.concat("]");
-			console.log(str);
-			
-			console.log("Ajax POST");
-			//save to DB
-			$.ajax({
-				type: 'POST',
-				url: '/save',
-				dataType: 'json',
-				data: {'state': str},
-			});
-				
+			d.var = 1;
+			var index = userData.indexOf(id);
+			if (index > -1) {
+				userData.splice(index, 1);
+			}
+			updateDB = true;
+		}
+		if(updateDB)
+		{
+			change(ClassesData);
+			console.log(userData);
+			savetoDB(userData);
 		}
 		
 	}
 }
+function savetoDB(udata)
+{
+	var str = "[";
+			
+	for(var i=0;i<udata.length;i++)
+	{
+		if(i < udata.length -1)
+		{
+			str = str.concat("'",udata[i],"'",",");
+		}
+		else
+		{
+			str = str.concat("'",udata[i],"'");
+		}
+	}
+	str = str.concat("]");
+	console.log(str);
+	
+	console.log("Ajax POST");
+	//save to DB
+	$.ajax({
+		type: 'POST',
+		url: '/save',
+		dataType: 'json',
+		data: {'state': str},
+	});
+}
 function setFocusTree(treeid)
 {
-	if(treeid)
+	if(!treeid)
 	{
-		for(var i=0;i<ClassesData.length;i++)
+		fucusedID = null;
+	}
+	for(var i=0;i<ClassesData.length;i++)
+	{
+		if(ClassesData[i].id != treeid)
 		{
-			if(ClassesData[i].id != treeid)
+			ClassesData[i].value = 1;
+		}
+		else
+		{
+			if(ClassesData[i].value > 1)
 			{
-				ClassesData[i].value = 1;
-			}
-			else
-			{
-				if(ClassesData[i].value > 1)
+				//cant unfocus in class view
+				if(!content.class_page)
 				{
 					ClassesData[i].value = 1;
 					focusedID = null;
 				}
-				else
-				{
-					ClassesData[i].value = 100;
-					focusedID = ClassesData[i].id;
-				}
+			}
+			else
+			{
+				ClassesData[i].value = 100;
+				focusedID = ClassesData[i].id;
 			}
 		}
 	}
@@ -395,6 +479,14 @@ var treeEnter = tree.enter()
 	.attr("class", "tree")
 	.attr("id", function(d,i){return "tree_"+i;});
 
+if(focusedID)
+{
+	svg.transition().duration(animationTime).attr("transform", "translate(" + width / 3 + "," + height / 2 + ")");
+}
+else
+{
+	svg.transition().duration(animationTime).attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+}
 
 tree.each(function(d,i){
 		var sector = Math.abs(d.endAngle-d.startAngle);
@@ -414,9 +506,13 @@ tree.each(function(d,i){
 		{
 			showOnlyChosen = true;
 		}
-		
+		var skillR = radius*2;
+		if(focusedID)
+		{
+			skillR = radius*2.5;
+		}
 		var skilltree = d3.layout.tree()
-				.size([sector, 400]);
+				.size([sector, skillR]);
 		
 		var a0 = midAngle(d)-Math.PI;
 		var x0 = Math.cos(a0+Math.PI*0.5)*radius*0.8;
@@ -511,9 +607,7 @@ tree.each(function(d,i){
 				this.curangle0 = l.source.angle0;
 			})
 		}
-		
-		
-	
+			
 		icons.enter().append("pattern")
 		.attr("id", function(d) { return "img"+d.id; })
 		.attr("width", imgradius*2)
@@ -531,7 +625,19 @@ tree.each(function(d,i){
 		var node = d3.select("#tree_"+i).selectAll(".node").data(nodes);
 		if(!hidden)
 		{
-		node.style("visibility",function(n){return varToVsibility(n.var)}).transition().duration(animationTime)
+		node.style("visibility",function(n){return varToVsibility(n.var)})
+				.style("fill",function(n) {
+					if(n.var == 0)
+					{
+						return "grey";
+					}	
+					if(n.var == 1)
+					{
+						return "lightgrey";
+					}
+					return "url(#img"+n.id+")";
+				})
+				.transition().duration(animationTime)
 				.attrTween("cx",function(d){
 									var r = d.radius;
 									var interpolate = d3.interpolate(this.curangle,d.angle);
@@ -683,8 +789,4 @@ d3.selectAll(".node")
 	});
 	
 }
-
-
-
-
 });
