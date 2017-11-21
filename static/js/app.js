@@ -106,7 +106,7 @@ applyUserData(userData);
 
 setFocusTree(focusedID);
 
-if(!selected)
+if(!(selected && content.class_page))
 {
 d3.selectAll(".actionbutton")
 	.on("click", function(){
@@ -365,6 +365,20 @@ function ClassNameidToTreeid(sliceid)
 		if(n < ClassesData.length)
 		{
 			return ClassesData[n].id;
+		}
+	}
+}
+
+function NodeidToTreeid(nodeid)
+{
+	if(nodeid)
+	{
+		for(var n = 0;n<ClassesData.length;n++)
+		{
+			if(idMatch(nodeid,ClassesData[n].id) > 0)
+			{
+				return ClassesData[n].id;
+			}
 		}
 	}
 }
@@ -779,7 +793,14 @@ d3.selectAll(".slice")
 	})
 d3.selectAll(".node")
 	.on("click", function(){
-		updateClassesData(d3.select(this).attr("id"));
+		if(focusedID)
+		{
+			updateClassesData(d3.select(this).attr("id"));
+		}
+		else
+		{
+			setFocusTree(NodeidToTreeid(d3.select(this).attr("id")));
+		}
 	})
 	.on("mouseout", function(){
 		d3.select(this).style("stroke", "none");
