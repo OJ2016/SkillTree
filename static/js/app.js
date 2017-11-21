@@ -14,7 +14,7 @@ for(var i=0;i<content.data.length;i++)
 	console.log(i);
 	ClassesData.push(JSON.parse(content.data[i].content.replace(/'/g ,"\"")));
 }
-ClassesData = [];
+
 var noskills = true;
 if(ClassesData.length > 0)
 {
