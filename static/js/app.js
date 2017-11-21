@@ -11,7 +11,6 @@ var ClassesData = [];
 
 for(var i=0;i<content.data.length;i++)
 {
-	console.log(i);
 	ClassesData.push(JSON.parse(content.data[i].content.replace(/'/g ,"\"")));
 }
 
@@ -38,7 +37,6 @@ if(content.saved_state != "[]" && !noskills)
 	var userData = content.saved_state.replace('[','').replace(']','').replace(/'/g ,'').split(',');
 }
 
-console.log(userData);
 var focusedID = null;
 
 if(content.class_page && !noskills)
@@ -290,7 +288,6 @@ if(!noskills)
 			if(updateDB)
 			{
 				change(ClassesData);
-				console.log(userData);
 				savetoDB(userData);
 			}
 			
