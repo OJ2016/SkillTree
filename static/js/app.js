@@ -726,14 +726,14 @@ tree.each(function(d,i){
 									this.curangle0 = d.target.angle0;
 									return function(t)
 									{
-										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r+20;
+										return Math.sin(interpolate0(t)+Math.PI*0.5)*radius*0.8 + Math.sin(interpolate(t))*r+25;
 									}})
 		
 		var textenter = text.enter()
 			.insert("text")
 			.style("text-anchor","middle")
 			.attr("x",function(l){ return l.target.x})
-			.attr("y",function(l){ return l.target.y+20})
+			.attr("y",function(l){ return l.target.y+25})
 			.style("visibility",function(l){return varToVsibility(l.target.var)})
 			.text(function(l){return l.target.name})
 			.each(function(l){
@@ -791,6 +791,12 @@ d3.selectAll(".slice")
 	.on("click", function(){
 		setFocusTree(SliceidToTreeid(d3.select(this).attr("id")));
 	})
+	.on("mouseout", function(){
+		d3.select(this).style("stroke", "none");
+	})
+	.on("mouseover", function(){
+		d3.select(this).style("stroke", "grey");
+	});
 d3.selectAll(".node")
 	.on("click", function(){
 		if(focusedID)
@@ -806,7 +812,7 @@ d3.selectAll(".node")
 		d3.select(this).style("stroke", "none");
 	})
 	.on("mouseover", function(){
-		d3.select(this).style("stroke", "blue");
+		d3.select(this).style("stroke", "grey");
 	});
 	
 }
