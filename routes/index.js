@@ -25,7 +25,6 @@ module.exports = function(app, passport) {
 					data: []
 				}
 			};
-
 		   	// find all classes user has selected and render site
 		   	mongoose.model('classes').find({id: { $in: class_ids}}, function(err, classes){
 				if (err) {
@@ -97,6 +96,7 @@ module.exports = function(app, passport) {
 					data: []
 				}
 			};
+
 			// Get class information from DB
 			mongoose.model('classes').findOne({id: req.params.class_id}, function(err, classes){
 				if (err) {
@@ -187,7 +187,7 @@ module.exports = function(app, passport) {
 		saved_state = saved_state.split(",");
 		var id_array = [];
 		for (i=0;i<saved_state.length;i++) {
-			if (saved_state[i].indexOf(".") == -1) {
+			if (saved_state[i].indexOf(".") == -1 && saved_state[i].length > 0) {
 				id_array.push(Number(saved_state[i]));
 			}
 		}
