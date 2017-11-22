@@ -14,7 +14,7 @@
                     'name': 'Bilingual',
                     'id': '0.0.0',
                     'var': 0,
-                    'url': '/resources/images/presentation/000.png',
+                    'url': '/resources/images/presentation/000.png'
                 },
                 {
                     'name': 'Group',

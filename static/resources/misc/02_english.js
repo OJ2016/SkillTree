@@ -19,7 +19,7 @@
                     'name': 'Mistake as Native',
                     'id': '2.0.0.0',
                     'var': 0,
-                    'url': '/resources/images/english/2000.png',
+                    'url': '/resources/images/english/2000.png'
                 }]
             }]
         },
@@ -80,8 +80,7 @@
                         'name': 'Think in English',
                         'id': '2.2.0.0.0',
                         'var': 0,
-                        'url': '/resources/images/english/22000.png',
-
+                        'url': '/resources/images/english/22000.png'
                     }]
                 }]
             }]
