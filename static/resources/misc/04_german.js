@@ -6,18 +6,18 @@
     'value': 1,
     'url': '/resources/images/german/4.png',
     'children': [{
-            'name': 'Wurst',
+            'name': 'Order Beer',
             'id': '4.0',
             'var': 0,
             'url': '/resources/images/german/40.png',
             'children': [{
-                    'name': 'Speck',
+                    'name': 'Octoberfest',
                     'id': '4.0.0',
                     'var': 0,
                     'url': '/resources/images/german/400.png'
                 },
                 {
-                    'name': 'Eier',
+                    'name': 'Lederhosen',
                     'id': '4.0.1',
                     'var': 0,
                     'url': '/resources/images/german/401.png'
@@ -25,18 +25,18 @@
             ]
         },
         {
-            'name': 'Successful Project',
+            'name': 'German School',
             'id': '4.1',
             'var': 0,
             'url': '/resources/images/german/41.png',
             'children': [{
-                    'name': 'Kraut',
+                    'name': 'Read Book',
                     'id': '4.1.0',
                     'var': 0,
                     'url': '/resources/images/german/410.png'
                 },
                 {
-                    'name': 'Apfel',
+                    'name': 'Watch Movie',
                     'id': '4.1.1',
                     'var': 0,
                     'url': '/resources/images/german/411.png'

@@ -6,18 +6,18 @@
     'value': 1,
     'url': '/resources/images/leadership/5.png',
     'children': [{
-            'name': 'Wurst',
+            'name': 'Coordinator',
             'id': '5.0',
             'var': 0,
             'url': '/resources/images/leadership/50.png',
             'children': [{
-                    'name': 'Speck',
+                    'name': 'Analyzer',
                     'id': '5.0.0',
                     'var': 0,
                     'url': '/resources/images/leadership/500.png'
                 },
                 {
-                    'name': 'Eier',
+                    'name': 'Winner',
                     'id': '5.0.1',
                     'var': 0,
                     'url': '/resources/images/leadership/501.png'
@@ -25,18 +25,18 @@
             ]
         },
         {
-            'name': 'Successful Project',
+            'name': 'Inspirtation',
             'id': '5.1',
             'var': 0,
             'url': '/resources/images/leadership/51.png',
             'children': [{
-                    'name': 'Kraut',
+                    'name': '',
                     'id': '5.1.0',
                     'var': 0,
                     'url': '/resources/images/leadership/510.png'
                 },
                 {
-                    'name': 'Apfel',
+                    'name': 'Support',
                     'id': '5.1.1',
                     'var': 0,
                     'url': '/resources/images/leadership/511.png'
