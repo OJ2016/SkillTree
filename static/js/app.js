@@ -511,7 +511,7 @@ if(!noskills)
 	}
 
 	tree.each(function(d,i){
-			var sector = Math.abs(d.endAngle-d.startAngle);
+			var sector = Math.abs(d.endAngle-d.startAngle)*1.5;
 			var maxsector = Math.PI;
 			if(sector > maxsector)
 			{
